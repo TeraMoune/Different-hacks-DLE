@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Custom usergroup marker</name>
+	<description>Дополнительное поле для групп которое может быть использовано как маркер группы. teramoune@gmail.com</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[ALTER TABLE `{prefix}_usergroups` ADD `group_name_prefix` varchar(255) NOT NULL Default '';
+ALTER TABLE `{prefix}_usergroups` ADD `allow_prefix` tinyint(1) NOT NULL Default '0';]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{prefix}_usergroups` DROP `group_name_prefix`;
+ALTER TABLE `{prefix}_usergroups` DROP `allow_prefix`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/show.short.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->set( '{author}', "<a onclick=\"ShowProfile('" . urlencode( $row['autor'] ) . "', '" . $go_page . "', '" . $user_group[$member_id['user_group']]['admin_editusers'] . "'); return false;\" href=\"" . $go_page . "\">" . $row['autor'] . "</a>" );]]></searchcode>
+			<replacecode><![CDATA[$owner = $db->super_query("SELECT user_group, banned FROM `".USERPREFIX."_users` WHERE name = '" . @$db->safesql( $row['autor'] ) . "'");
+
+if( $user_group[$owner['user_group']]['allow_prefix'] ) {
+  	if( $owner['banned'] == 'yes' ) $user_group[$owner['user_group']]['group_name'] = $lang['user_ban'];
+	$status = $user_group[$owner['user_group']]['group_name_prefix'] ? $user_group[$owner['user_group']]['group_name_prefix'] : $user_group[$owner['user_group']]['group_prefix'].$user_group[$owner['user_group']]['group_name'].$user_group[$owner['user_group']]['group_suffix'];
+	$tpl->set( '{status}', $status );
+} else $tpl->set( '{status}', '' ); ]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.full.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->set( '{author}', "<a onclick=\"ShowProfile('" . urlencode( $row['autor'] ) . "', '" . $go_page . "', '" . $user_group[$member_id['user_group']]['admin_editusers'] . "'); return false;\" href=\"" . $go_page . "\">" . $row['autor'] . "</a>" );]]></searchcode>
+			<replacecode><![CDATA[$owner = $db->super_query("SELECT user_group FROM `".USERPREFIX."_users` WHERE name = '" . @$db->safesql( $row['autor'] ) . "'");
+
+if( $user_group[$owner['user_group']]['allow_prefix'] ) {
+  	if( $owner['banned'] == 'yes' ) $user_group[$owner['user_group']]['group_name'] = $lang['user_ban'];
+	$status = $user_group[$owner['user_group']]['group_name_prefix'] ? $user_group[$owner['user_group']]['group_name_prefix'] : $user_group[$owner['user_group']]['group_prefix'].$user_group[$owner['user_group']]['group_name'].$user_group[$owner['user_group']]['group_suffix'];
+	$tpl->set( '{status}', $status );
+} else $tpl->set( '{status}', '' ); ]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.custom.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->set( '{author}', "<a onclick=\"ShowProfile('" . urlencode( $row['autor'] ) . "', '" . $go_page . "', '" . $user_group[$member_id['user_group']]['admin_editusers'] . "'); return false;\" href=\"" . $go_page . "\">" . $row['autor'] . "</a>" );]]></searchcode>
+			<replacecode><![CDATA[$owner = $db->super_query("SELECT user_group FROM `".USERPREFIX."_users` WHERE name = '" . @$db->safesql( $row['autor'] ) . "'");
+
+if( $user_group[$owner['user_group']]['allow_prefix'] ) {
+  	if( $owner['banned'] == 'yes' ) $user_group[$owner['user_group']]['group_name'] = $lang['user_ban'];
+	$status = $user_group[$owner['user_group']]['group_name_prefix'] ? $user_group[$owner['user_group']]['group_name_prefix'] : $user_group[$owner['user_group']]['group_prefix'].$user_group[$owner['user_group']]['group_name'].$user_group[$owner['user_group']]['group_suffix'];
+	$tpl->set( '{status}', $status );
+} else $tpl->set( '{status}', '' ); ]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/inc/usergroup.php">
+		<operation action="after">
+			<searchcode><![CDATA[<tr>
+    <td style="width:58%"><h6 class="media-heading text-semibold">{$lang['group_name']}</h6><span class="text-muted text-size-small hidden-xs">{$lang['hint_gtitle']}</span></td>
+    <td style="width:42%"><input type="text" class="form-control" name="group_name" value="{$group_name_value}"></td>
+</tr>]]></searchcode>
+			<replacecode><![CDATA[<tr>
+    <td style="width:58%"><h6 class="media-heading text-semibold">Другой префикс группы</h6></td>
+    <td style="width:42%"><input type="text" class="form-control" name="group_name_prefix" value="{$group_name_prefix_value}" style="width: 330px;margin-right: 20px;"><input class="switch" type="checkbox" name="allow_prefix" {$allow_prefix} value="1" {$gastgroup}></td>
+</tr>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$group_name_value = htmlspecialchars( stripslashes( $user_group[$id]['group_name'] ), ENT_QUOTES, $config['charset'] );]]></searchcode>
+			<replacecode><![CDATA[$group_name_prefix_value = htmlspecialchars( stripslashes( $user_group[$id]['group_name_prefix'] ), ENT_QUOTES, $config['charset'] );]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$group_name_value = "";]]></searchcode>
+			<replacecode><![CDATA[$group_name_prefix_value = "";]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$group_name = $db->safesql( strip_tags( clear_html($_REQUEST['group_name']) ) );]]></searchcode>
+			<replacecode><![CDATA[$group_name_prefix = $db->safesql( clear_html($_REQUEST['group_name_prefix']) );
+$allow_prefix = intval( $_REQUEST['allow_prefix'] );]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[group_name, allow_cats,]]></searchcode>
+			<replacecode><![CDATA[group_name, group_name_prefix, allow_prefix, allow_cats,]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA['$group_name', '$allow_cats',]]></searchcode>
+			<replacecode><![CDATA['$group_name', '$group_name_prefix', '$allow_prefix', '$allow_cats',]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[group_name='$group_name', allow_cats='$allow_cats',]]></searchcode>
+			<replacecode><![CDATA[group_name='$group_name', group_name_prefix='$group_name_prefix', allow_prefix='$allow_prefix', allow_cats='$allow_cats',]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[if( $user_group[$id]['allow_offline'] ) $allow_offline = "checked";]]></searchcode>
+			<replacecode><![CDATA[if( $user_group[$id]['allow_prefix'] ) $allow_prefix = "checked";]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
