@@ -29,8 +29,8 @@ ALTER TABLE `{prefix}_usergroups` DROP `allow_prefix`;]]></mysqldelete>
 if( $user_group[$owner['user_group']]['allow_prefix'] ) {
   	if( $owner['banned'] == 'yes' ) $user_group[$owner['user_group']]['group_name'] = $lang['user_ban'];
 	$status = $user_group[$owner['user_group']]['group_name_prefix'] ? $user_group[$owner['user_group']]['group_name_prefix'] : $user_group[$owner['user_group']]['group_prefix'].$user_group[$owner['user_group']]['group_name'].$user_group[$owner['user_group']]['group_suffix'];
-	$tpl->set( '{status}', $status );
-} else $tpl->set( '{status}', '' ); ]]></replacecode>
+	$tpl->set( '{group-marker}', $status );
+} else $tpl->set( '{group-marker}', '' ); ]]></replacecode>
 		</operation>
 	</file>
 	<file name="engine/modules/show.full.php">
@@ -41,8 +41,8 @@ if( $user_group[$owner['user_group']]['allow_prefix'] ) {
 if( $user_group[$owner['user_group']]['allow_prefix'] ) {
   	if( $owner['banned'] == 'yes' ) $user_group[$owner['user_group']]['group_name'] = $lang['user_ban'];
 	$status = $user_group[$owner['user_group']]['group_name_prefix'] ? $user_group[$owner['user_group']]['group_name_prefix'] : $user_group[$owner['user_group']]['group_prefix'].$user_group[$owner['user_group']]['group_name'].$user_group[$owner['user_group']]['group_suffix'];
-	$tpl->set( '{status}', $status );
-} else $tpl->set( '{status}', '' ); ]]></replacecode>
+	$tpl->set( '{group-marker}', $status );
+} else $tpl->set( '{group-marker}', '' ); ]]></replacecode>
 		</operation>
 	</file>
 	<file name="engine/modules/show.custom.php">
@@ -53,8 +53,8 @@ if( $user_group[$owner['user_group']]['allow_prefix'] ) {
 if( $user_group[$owner['user_group']]['allow_prefix'] ) {
   	if( $owner['banned'] == 'yes' ) $user_group[$owner['user_group']]['group_name'] = $lang['user_ban'];
 	$status = $user_group[$owner['user_group']]['group_name_prefix'] ? $user_group[$owner['user_group']]['group_name_prefix'] : $user_group[$owner['user_group']]['group_prefix'].$user_group[$owner['user_group']]['group_name'].$user_group[$owner['user_group']]['group_suffix'];
-	$tpl->set( '{status}', $status );
-} else $tpl->set( '{status}', '' ); ]]></replacecode>
+	$tpl->set( '{group-marker}', $status );
+} else $tpl->set( '{group-marker}', '' ); ]]></replacecode>
 		</operation>
 	</file>
 	<file name="engine/inc/usergroup.php">
