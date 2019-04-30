@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Custom usergroup marker</name>
-	<description>Дополнительное поле для групп которое может быть использовано как маркер группы. teramoune@gmail.com</description>
+	<description>Дополнительное поле для групп которое может быть использовано как маркер группы.</description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
