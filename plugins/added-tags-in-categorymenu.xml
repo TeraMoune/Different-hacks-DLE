@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Added tags in categorymenu</name>
+	<description>Добавляет обвёртку тега [ischildren][/ischildren] аналогичный тегу [isparent][/isparent] и {sub-count} порядковый номер дочерней категории.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/classes/templates.class.php">
+		<operation action="after">
+			<searchcode><![CDATA[$template = str_replace( "{sub-item}", "", $template );]]></searchcode>
+			<replacecode><![CDATA[if( $indent != 0 ) {
+  
+  $template = str_replace( "[ischildren]", "", $template );
+  $template = str_replace( "[/ischildren]", "", $template );
+  
+} else $template = preg_replace( "'\\[ischildren\\](.+?)\\[/ischildren\\]'si", "", $template );]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$template = str_replace( "[/isparent]", "", $template );]]></searchcode>
+			<replacecode><![CDATA[$template = preg_replace( "'\\[ischildren\\](.+?)\\[/ischildren\\]'si", "", $template );]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[}
+		
+if( $sublevelmarker ) {]]></searchcode>
+			<replacecode><![CDATA[$item = str_replace( "{sub-count}", ($indent + 1), $item );]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[function compile_item( $row,  $template) {]]></searchcode>
+			<replacecode><![CDATA[function compile_item( $row,  $template, $indent) {]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$item .= $this->compile_item($node, $item_template);]]></searchcode>
+			<replacecode><![CDATA[$item .= $this->compile_item($node, $item_template, $indent);]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
