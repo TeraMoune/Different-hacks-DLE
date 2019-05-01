@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>HR text for new</name>
+	<description>Аналог &lt;hr&gt; тега только с тем отличием, что тег использует картинку в новостях для своего фона.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/engine.php">
+		<operation action="replace">
+			<searchcode><![CDATA[CHAR_LENGTH(p.full_story) as full_story]]></searchcode>
+			<replacecode><![CDATA[CHAR_LENGTH(p.full_story) as full_story, p.full_story as full_story_text]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.short.php">
+		<operation action="after">
+			<searchcode><![CDATA[$row['short_story'] = stripslashes($row['short_story']);]]></searchcode>
+			<replacecode><![CDATA[$row['full_story_text'] = stripslashes($row['full_story_text']);
+if (stripos($row['short_story'], "{hr-") !== false){
+	$images = array();
+  	$images_o = array();
+	preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['full_story_text'].$row['xfields'], $media);
+	$data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+	$data = array_unique($data);
+	foreach($data as $url) {
+		$info = pathinfo($url);
+       	$url_o = preg_replace('/(medium\/|thumbs\/)/i',"",$url);
+		if (isset($info['extension'])) {
+			if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-plus" ) continue;
+			$info['extension'] = strtolower($info['extension']);
+			if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) {
+              array_push($images, $url);
+              array_push($images_o, $url_o);              
+            }
+		}
+	}
+		
+	if ( count($images) ) {
+		$i=0;
+		foreach($images_o as $url) {
+			$i++;
+                  
+			if( preg_match('/\{hr-'.$i.' top="(.*?)"\}/i', $row['short_story'], $top) ) {
+				$position = "background-position: 50% $top[1]%;";
+			} else $position = "";                 
+                  
+            $find = "'{hr-" .$i. ".*?}'";
+	   	 	$replace = "<!--separation:{$i}--><span class=\"article-separation\" style=\"background-image:url('$url'); $position\"></span><!--/separation-->";
+		    $row['short_story'] = preg_replace( $find, $replace, $row['short_story'] );
+		}
+	
+	}
+}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$images = array();
+preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['xfields'], $media);
+$data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+	
+foreach($data as $url) {
+	$info = pathinfo($url);
+	if (isset($info['extension'])) {
+		if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-minus" OR strpos($info['dirname'], 'engine/data/emoticons') !== false) continue;
+		$info['extension'] = strtolower($info['extension']);
+		if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) array_push($images, $url);
+	}
+}]]></searchcode>
+			<replacecode><![CDATA[if( !count($images) ) {
+  $images = array();
+  preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['full_story_text'].$row['xfields'], $media);
+  $data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+  $data = array_unique($data);
+
+  foreach($data as $url) {
+      $info = pathinfo($url);
+      if (isset($info['extension'])) {
+          if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-minus" OR strpos($info['dirname'], 'engine/data/emoticons') !== false) continue;
+          $info['extension'] = strtolower($info['extension']);
+          if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) array_push($images, $url);
+      }
+  }
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.full.php">
+		<operation action="after">
+			<searchcode><![CDATA[	$row['full_story'] = replace_links ( $row['full_story'], $replace_links['news'] );
+}]]></searchcode>
+			<replacecode><![CDATA[if (stripos($row['full_story'], "{hr-") !== false){
+	$images = array();
+  	$images_o = array();
+	preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['full_story'].$row['xfields'], $media);
+	$data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+	$data = array_unique($data);
+	foreach($data as $url) {
+		$info = pathinfo($url);
+       	$url_o = preg_replace('/(medium\/|thumbs\/)/i',"",$url);
+		if (isset($info['extension'])) {
+			if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-plus" ) continue;
+			$info['extension'] = strtolower($info['extension']);
+			if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) {
+              array_push($images, $url);
+              array_push($images_o, $url_o);              
+            }
+		}
+	}
+		
+	if ( count($images) ) {
+		$i=0;
+		foreach($images_o as $url) {
+			$i++;
+                  
+			if( preg_match('/\{hr-'.$i.' top="(.*?)"\}/i', $row['full_story'], $top) ) {
+				$position = "background-position: 50% $top[1]%;";
+			} else $position = "";                 
+                  
+            $find = "'{hr-" .$i. ".*?}'";
+	   	 	$replace = "<!--separation:{$i}--><span class=\"article-separation\" style=\"background-image:url('$url'); $position\"></span><!--/separation-->";
+		    $row['full_story'] = preg_replace( $find, $replace, $row['full_story'] );
+		}
+	
+	}
+}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$images = array();
+preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['xfields'], $media);
+$data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+	
+foreach($data as $url) {
+	$info = pathinfo($url);
+	if (isset($info['extension'])) {
+		if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-minus" OR strpos($info['dirname'], 'engine/data/emoticons') !== false) continue;
+		$info['extension'] = strtolower($info['extension']);
+		if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) array_push($images, $url);
+	}
+}]]></searchcode>
+			<replacecode><![CDATA[if( !count($images) ) {
+  $images = array();
+  preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['full_story'].$row['xfields'], $media);
+  $data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+  $data = array_unique($data);
+
+  foreach($data as $url) {
+      $info = pathinfo($url);
+      if (isset($info['extension'])) {
+          if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-minus" OR strpos($info['dirname'], 'engine/data/emoticons') !== false) continue;
+          $info['extension'] = strtolower($info['extension']);
+          if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) array_push($images, $url);
+      }
+  }
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.custom.php">
+		<operation action="before">
+			<searchcode><![CDATA[if (stripos ( $tpl->copy_template, "{image-" ) !== false) {]]></searchcode>
+			<replacecode><![CDATA[if (stripos($row['short_story'], "{hr-") !== false){
+	$images = array();
+  	$images_o = array();
+	preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['full_story'].$row['xfields'], $media);
+	$data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+	$data = array_unique($data);
+	foreach($data as $url) {
+		$info = pathinfo($url);
+       	$url_o = preg_replace('/(medium\/|thumbs\/)/i',"",$url);
+		if (isset($info['extension'])) {
+			if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-plus" ) continue;
+			$info['extension'] = strtolower($info['extension']);
+			if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) {
+              array_push($images, $url);
+              array_push($images_o, $url_o);              
+            }
+		}
+	}
+		
+	if ( count($images) ) {
+		$i=0;
+		foreach($images_o as $url) {
+			$i++;
+                  
+			if( preg_match('/\{hr-'.$i.' top="(.*?)"\}/i', $row['short_story'], $top) ) {
+				$position = "background-position: 50% $top[1]%;";
+			} else $position = "";                 
+                  
+            $find = "'{hr-" .$i. ".*?}'";
+	   	 	$replace = "<!--separation:{$i}--><span class=\"article-separation\" style=\"background-image:url('$url'); $position\"></span><!--/separation-->";
+		    $row['short_story'] = preg_replace( $find, $replace, $row['short_story'] );
+		}
+	
+	}
+}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$images = array();
+preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['xfields'], $media);
+$data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+	
+foreach($data as $url) {
+	$info = pathinfo($url);
+	if (isset($info['extension'])) {
+		if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-minus" OR strpos($info['dirname'], 'engine/data/emoticons') !== false) continue;
+		$info['extension'] = strtolower($info['extension']);
+		if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) array_push($images, $url);
+	}
+}]]></searchcode>
+			<replacecode><![CDATA[if( !count($images) ) {
+  $images = array();
+  preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['full_story'].$row['xfields'], $media);
+  $data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+  $data = array_unique($data);
+
+  foreach($data as $url) {
+      $info = pathinfo($url);
+      if (isset($info['extension'])) {
+          if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-minus" OR strpos($info['dirname'], 'engine/data/emoticons') !== false) continue;
+          $info['extension'] = strtolower($info['extension']);
+          if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) array_push($images, $url);
+      }
+  }
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
