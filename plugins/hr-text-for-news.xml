@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
-	<name>HR text for new</name>
+	<name>HR text for news</name>
 	<description>Аналог &lt;hr&gt; тега только с тем отличием, что тег использует картинку в новостях для своего фона.</description>
 	<icon></icon>
 	<version></version>
