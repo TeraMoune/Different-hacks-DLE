@@ -8,7 +8,7 @@
 ---
  1. [Added tags in categorymenu](https://github.com/TeraMoune/Different-hacks-DLE#added-tags-in-categorymenuxml)
  2. [Custom usergroup marker](https://github.com/TeraMoune/Different-hacks-DLE#custom-usergroup-markerxml)
- 3. [Hr text for new](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newxml)
+ 3. [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml) :new:
 
 
 #### Added-tags-in-categorymenu.xml
@@ -27,7 +27,7 @@
 Не знаю кому-то понадобилось на dle-faq что-то похожее. Добавляет тег `{group-marker}` выводит указанный текст для группы (Поле находится в **Настройке групп**, Другой префикс группы. Если пользователь забанен то тег выведет это вместо маркера.
 
 
-#### Hr-text-for-new.xml
+#### Hr-text-for-news.xml
 ---
 Хак добавляет `{hr-N}` тег при написании новостей, где N порядковый номер изображения. Заменяет на выходе span элементом подставляя картинку в качестве фона. Можно указать позицию изображения в % например `{hr-1 top="25"}`
 
