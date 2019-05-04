@@ -8,7 +8,7 @@
 ---
  1. [Added tags in categorymenu](https://github.com/TeraMoune/Different-hacks-DLE#added-tags-in-categorymenuxml)
  2. [Custom usergroup marker](https://github.com/TeraMoune/Different-hacks-DLE#custom-usergroup-markerxml)
- 3. [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml) :new:
+ 3. [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml)
 
 
 #### Added-tags-in-categorymenu.xml
