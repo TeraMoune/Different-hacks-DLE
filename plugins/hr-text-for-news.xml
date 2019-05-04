@@ -137,7 +137,7 @@ foreach($data as $url) {
 		</operation>
 		<operation action="replace">
 			<searchcode><![CDATA[$images = array();
-preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['xfields'], $media);
+preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $row['short_story'].$row['full_story'].$row['xfields'], $media);
 $data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
 	
 foreach($data as $url) {
