@@ -7,8 +7,7 @@
 ### Список
 ---
  1. [Added tags in categorymenu](https://github.com/TeraMoune/Different-hacks-DLE#added-tags-in-categorymenuxml)
- 2. [Custom usergroup marker](https://github.com/TeraMoune/Different-hacks-DLE#custom-usergroup-markerxml)
- 3. [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml)
+ 2. [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml)
 
 
 #### Added-tags-in-categorymenu.xml
@@ -18,14 +17,6 @@
 Добавляет аналогичный тегам `[isparent][/isparent]` теги `[ischildren][/ischildren]`.
 Применяются между `[item][/item]` выводит текст для итема который является дочерним. (срабатывает только начиная с дочернего итема)
 Тег `{sub-count}` применяется в как можно понять между мегами `[sub-prefix][/sub-prefix]` заменяется на порядковый номер дочерней категории.
-
-
-#### Custom-usergroup-marker.xml
----
-  - Шаблоны применения: `shortstory.tpl`, `fullstory.tpl` в шаблонах кастомных новостей.
-  
-Не знаю кому-то понадобилось на dle-faq что-то похожее. Добавляет тег `{group-marker}` выводит указанный текст для группы (Поле находится в **Настройке групп**, Другой префикс группы. Если пользователь забанен то тег выведет это вместо маркера.
-
 
 #### Hr-text-for-news.xml
 ---
