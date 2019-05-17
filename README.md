@@ -8,6 +8,8 @@
 ---
  1. [Added tags in categorymenu](https://github.com/TeraMoune/Different-hacks-DLE#added-tags-in-categorymenuxml)
  2. [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml)
+ 3. [Edit date comments](https://github.com/TeraMoune/Different-hacks-DLE#edit-date-commentsxml)
+ 4. [Auto width column image](https://github.com/TeraMoune/Different-hacks-DLE#auto-width-columnxml)
 
 
 #### Added-tags-in-categorymenu.xml
@@ -47,3 +49,12 @@
     }
 }
 ```
+
+#### Edit-date-comments.xml
+---
+Добавляет поле изменения даты комментарию для администратора.
+CSS оформление взять в файле `engine/skins/stylesheets/application.css` перенести стили `.xdsoft_datetimepicker` к себе в шаблон к стилям.
+
+#### Auto-width-column.xml
+---
+При загрузке картинок под выбором выравнивания будет два параметра, колонки и ширины. Установив в колонке число и выбрав все или часть картинок то им будет задан параметр `width` таким образом, чтобы уместилось в одну линию указанное число картинок. А ширина задаёт одинаковую ширину вставляемым изображениям.
