@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>edit date comments</name>
+	<description></description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/ajax/editcomments.php">
+		<operation action="replace">
+			<searchcode><![CDATA[<div align="right" style="width:99%;padding-top:5px;">]]></searchcode>
+			<replacecode><![CDATA[<div align="right" style="width:99%;padding-top:5px;">{$i_date}]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[$buffer = <<<HTML]]></searchcode>
+			<replacecode><![CDATA[$bb_code .= <<<HTML
+<script>
+var cal_language   = {en:{months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],dayOfWeek:["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]}};
+setTimeout(function() {
+
+	$('[data-rel=calendar]').datetimepicker({
+	  format:'Y-m-d H:i:s',
+	  step: 30,
+	  closeOnDateSelect:true,
+	  dayOfWeekStart: 1,
+	  scrollMonth:false,
+	  scrollInput:false,
+	  i18n: cal_language
+	});
+
+}, 100);
+
+</script>
+HTML;
+
+if ($member_id['user_group'] == 1) {
+	$i_date = "<input type=\"text\" id=\"newdate{$id}\" name=\"newdate{$id}\" data-rel=\"calendar\" class=\"form-control position-left\" style=\"width:190px;float:left;\" value=\"{$input_date}\" autocomplete=\"off\">";
+} else $i_date = "";]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[$row['date'] = strtotime( $row['date'] );]]></searchcode>
+			<replacecode><![CDATA[$input_date = $row['date'];]]></replacecode>
+			<searchcount>1</searchcount>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[$comm_txt = trim( $parse->BB_Parse( $parse->process( $_POST['comm_txt'] ), $use_html ) );]]></searchcode>
+			<replacecode><![CDATA[if( trim($_POST['date']) ){
+  $u_date = ", date='" . trim($_POST['date']) . "'";
+} else $u_date = "";]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[text='$comm_update', approve='1']]></searchcode>
+			<replacecode><![CDATA[text='$comm_update', approve='1'$u_date]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
