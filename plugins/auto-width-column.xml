@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Auto width column</name>
+	<description>Автоматическая установка width в процентах при указании количества колонок.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/ajax/upload.php">
+		<operation action="replace">
+			<searchcode><![CDATA[  <option value="center" {$image_align['center']}>{$lang['images_center']}</option>
+</select></div>]]></searchcode>
+			<replacecode><![CDATA[  <option value="center" {$image_align['center']}>{$lang['images_center']}</option>
+</select>
+<div style="margin-top:5px;">
+	<div style="height: 21px;line-height: 21px;">
+    	Ширина
+    	<input type="text" id="imagewidthall" name="imagewidthall" value="" placeholder="width" maxlength="4" size="3" style="float: right;">
+    </div>
+    <div style="height: 21px;margin-top: 5px;line-height: 21px;">
+    	Картинок на строку
+    	<input type="text" id="imagecolum" name="imagecolum" value="3" placeholder="colum" maxlength="4" size="3" style="float: right;">
+    </div>
+</div></div>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[var imagetag = 'thumb';]]></searchcode>
+			<replacecode><![CDATA[if( $('#imagewidthall').val()  ) var w = $('#imagewidthall').val().replace( /px/g, "" );	
+else var w = false;]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[function buildimage( image, mass ) {
+
+    var wysiwyg = '{$wysiwyg}';
+	var content = '';
+	var align = $('#imagealign').val();
+	var imagealt = $('#imagetitle').val();
+	var allways_bbimages = '{$config['bbimages_in_wysiwyg']}';]]></searchcode>
+			<replacecode><![CDATA[function buildimage( image, mass ) {
+
+    var wysiwyg = '{$wysiwyg}';
+	var content = '';
+    var width = $('#imagewidthall').val();
+	var align = $('#imagealign').val();
+	var imagealt = $('#imagetitle').val();
+	var allways_bbimages = '{$config['bbimages_in_wysiwyg']}';
+    var colums = Math.floor(97 / $('#imagecolum').val()) + '%';]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[content = '<img src="'+ image +'" alt="'+ imagealt +'" class="'+ img_opt +'">';]]></searchcode>
+			<replacecode><![CDATA[if (width != '' || $('#imagecolum').val() != '') {
+	width = width ? width : colums;
+	width_in = ' style="width:'+width+';"';
+} else {
+	width_in = ' ';
+}				
+content = '<img src="'+ image +'" alt="'+ imagealt +'" class="'+ img_opt +'"'+width_in+'/>';]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[if (align == 'center' || align == 'none') {
+				
+	if(align == 'center') {
+		img_opt = " style=\"display: block; margin-left: auto; margin-right: auto;\"";
+	} else {
+		img_opt = "";
+	}
+					
+	content = '<img src="'+ image +'" alt="'+ imagealt +'"'+ img_opt +'>';
+					
+} else {
+				
+	content = '<img src="'+ image +'" style="float:' + align+ ';" alt="'+ imagealt +'">';
+					
+}]]></searchcode>
+			<replacecode><![CDATA[if (align == 'center' || align == 'none') {
+if (width != '' || $('#imagecolum').val() != '') {
+	width = width ? width : colums;
+	width_in = ' style="width:'+width+';"';
+} else {
+	width_in = ' ';
+}					
+	content = '<img src="'+ image +'" alt="'+ imagealt +'" title="'+ imagealt +'"'+width_in+'/>';				
+} else {
+if (width != '' || $('#imagecolum').val() != ''){
+	width ? width : colums;					
+	width_in = width;
+}else{
+	width_in = ' ';
+}					
+	content = '<img src="'+ image +'" style="float:' + align+ ';'+width_in+';" alt="'+ imagealt +'" title="'+ imagealt +'" />';		
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
