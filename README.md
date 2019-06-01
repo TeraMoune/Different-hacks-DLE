@@ -66,7 +66,7 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 ---
 Изменение meta-title при быстром редактировании.
 
-#### Donate
+### Donate
 Для материальной благодарности.
 
 <img src="https://qiwi.com/favicon.ico" width="16" height="16"> [Qiwi](https://qiwi.me/teramoune)
@@ -75,4 +75,3 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 
  - R425445633105
  - Z990082286464
- - B694053117066
