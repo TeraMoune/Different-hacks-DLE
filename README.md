@@ -4,6 +4,9 @@
 Различные хаки которые не дотягивают до полноценных модулей.
 Может кому-то пригодятся.
 
+### Установка
+Скачайте архив затем установите нужный плагин из папки plugins в админке.
+
 ### Список
 ---
  1. [Added tags in categorymenu](https://github.com/TeraMoune/Different-hacks-DLE#added-tags-in-categorymenuxml)
@@ -63,7 +66,7 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 ---
 Изменение meta-title при быстром редактировании.
 
-# Donate
+#### Donate
 Для материальной благодарности.
 
 <img src="https://qiwi.com/favicon.ico" width="16" height="16"> [Qiwi](https://qiwi.me/teramoune)
