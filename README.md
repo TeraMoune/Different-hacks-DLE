@@ -15,6 +15,7 @@
  4. [Auto width column image](https://github.com/TeraMoune/Different-hacks-DLE#auto-width-columnxml)
  5. [Fast edit meta-title news](https://github.com/TeraMoune/Different-hacks-DLE#fast-edit-meta-title-newsxml)
  6. [Recover password](https://github.com/TeraMoune/Different-hacks-DLE#recover-passwordxml)
+ 7. [Added foto tag in email templates](https://github.com/TeraMoune/Different-hacks-DLE#added-foto-tag-in-email-templatesxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -70,6 +71,10 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 #### recover-password.xml
 ---
 Изменение восстановления пароля, вместо двух писем будет отправлять лишь одно с ссылками. Перейдя по ссылке пользователь увидит сгенерированный пароль в info окошке. В настройках email шаблонов можно настроить шаблон который будет использован в info окошке (можно использовать html разметку)
+
+#### added-foto-tag-in-email-templates.xml
+---
+Добавляет {%foto%} тег в шаблон отправки уведомления личного сообщения.
 
 ### Donate
 Для материальной благодарности.
