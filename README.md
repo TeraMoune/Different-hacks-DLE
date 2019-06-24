@@ -5,7 +5,7 @@
 Может кому-то пригодятся.
 
 ### Установка
-Скачайте архив затем установите нужный плагин из папки plugins в админке.
+Скачайте архив затем установите нужный плагин из папки plugins.
 
 ### Список
 ---
@@ -14,6 +14,7 @@
  3. [Edit date comments](https://github.com/TeraMoune/Different-hacks-DLE#edit-date-commentsxml)
  4. [Auto width column image](https://github.com/TeraMoune/Different-hacks-DLE#auto-width-columnxml)
  5. [Fast edit meta-title news](https://github.com/TeraMoune/Different-hacks-DLE#fast-edit-meta-title-newsxml)
+ 6. [Recover password](https://github.com/TeraMoune/Different-hacks-DLE#recover-passwordxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -65,6 +66,10 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 #### Fast-edit-meta-title-news.xml
 ---
 Изменение meta-title при быстром редактировании.
+
+#### recover-password.xml
+---
+Изменение восстановления пароля, вместо двух писем будет отправлять лишь одно с ссылками. Перейдя по ссылке пользователь увидит сгенерированный пароль в info окошке. В настройках email шаблонов можно настроить шаблон который будет использован в info окошке (можно использовать html разметку)
 
 ### Donate
 Для материальной благодарности.
