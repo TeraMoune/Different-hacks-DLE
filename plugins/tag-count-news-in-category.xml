@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Tag count news in category</name>
+	<description></description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[ALTER TABLE `{prefix}_category` ADD `update_news` varchar(11) NOT NULL DEFAULT '0';]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{prefix}_category` DROP `update_news`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/functions.php">
+		<operation action="before">
+			<searchcode><![CDATA[function dle_session( $sid = false ) {]]></searchcode>
+			<replacecode><![CDATA[function count_news( $matches=array() ) {
+  	global $cat_info, $config, $_TIME, $lang;
+  
+	$match[1] = intval($matches[1]);
+	
+	if( $config['category_newscount'] ) {
+
+      if( isset($cat_info[$match[1]]['newscount']) ) {
+			
+      	if( $cat_info[$match[1]]['update_news'] ) {
+			
+            if( date( 'Ymd', $cat_info[$match[1]]['update_news'] ) == date( 'Ymd', $_TIME ) ) {
+
+                $return = $lang['time_heute'] . langdate( ", H:i", $cat_info[$match[1]]['update_news'] );
+
+            } elseif( date( 'Ymd', $cat_info[$match[1]]['update_news'] ) == date( 'Ymd', ($_TIME - ( 1 * 86400) ) ) ) {
+
+                $return = $lang['time_gestern'] . langdate( ", H:i", $cat_info[$match[1]]['update_news'] );
+
+            }
+              
+      	} 
+        	
+       	if( !$return ) {
+          
+			$return = str_replace( "{c-news}", $cat_info[$match[1]]['newscount'], $matches[2] );
+          
+        }
+        
+      } else $return = 0;
+      
+	} else $return = "";	
+
+  
+  	return $return;
+	
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/main.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->compile ( 'main' );]]></searchcode>
+			<replacecode><![CDATA[if (stripos ( $tpl->result['main'], "[count-news" ) !== false AND $news_found) {
+
+    $tpl->result['main'] = preg_replace_callback ( "#\\[count-news=(.+?)\\](.*?)\\[/count-news\\]#is", "count_news", $tpl->result['main'] );
+  
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/addnews.php">
+		<operation action="after">
+			<searchcode><![CDATA[$row['id'] = $db->insert_id();]]></searchcode>
+			<replacecode><![CDATA[if( $category_list ) {
+  
+  	$category_list_t = explode(',', $category_list);
+  
+  	foreach( $category_list_t as $cid ) {
+      
+      $cid = intval($cid);
+      if( $cid ) $db->query( "UPDATE " . USERPREFIX . "_category SET update_news = '{$added_time}' WHERE id ='{$cid}'" );
+      
+    }
+  
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
