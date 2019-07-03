@@ -16,6 +16,7 @@
  5. [Fast edit meta-title news](https://github.com/TeraMoune/Different-hacks-DLE#fast-edit-meta-title-newsxml)
  6. [Recover password](https://github.com/TeraMoune/Different-hacks-DLE#recover-passwordxml)
  7. [Added foto tag in email templates](https://github.com/TeraMoune/Different-hacks-DLE#added-foto-tag-in-email-templatesxml)
+ 8. [Tags count in category](https://github.com/TeraMoune/Different-hacks-DLE#tag-count-news-in-categoryxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -75,6 +76,11 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 #### added-foto-tag-in-email-templates.xml
 ---
 Добавляет {%foto%} тег в шаблон отправки уведомления личного сообщения.
+
+#### tag-count-news-in-category.xml
+---
+Добавляет [count-news=cat_id]{c-news}[/count-news] теги в шаблон. Выводит количество новостей независимо от categorymenu.tpl.
+Обязательно включить подсчёт количества новостей. Так же в течении текущего и прошедшего дня будет писать время последнего обновления категории (Учёт только добавленных новостей)
 
 ### Donate
 Для материальной благодарности.
