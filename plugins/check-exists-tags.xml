@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Check exists tags</name>
-	<description>[exists-tags=tagname] text [/exists-tags] Выводит заключённый между блоками содержимое если указанный 'tagname' тег существует в новости. Можно указывать несколько тегов через запятую.</description>
+	<description>[exists-tags="tagname"] text [/exists-tags] Выводит заключённый между блоками содержимое если указанный 'tagname' тег существует в новости. Можно указывать несколько тегов через запятую.</description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
@@ -26,6 +26,10 @@
 	$tpl->copy_template = preg_replace_callback ( "#\\[exists-tags=[\"|\'](.+?)[\"|\']\\](.*?)\\[/exists-tags\\]#is", "check_exists_tags", $tpl->copy_template );
 }]]></replacecode>
 		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[$tpl->set_block( "'\\[tags\\](.*?)\\[/tags\\]'si", "" );]]></searchcode>
+			<replacecode><![CDATA[$tpl->set_block( "'\\[exists-tags=[\"|\'](.+?)[\"|\']\\](.*?)\\[/exists-tags\\]'si", "" );]]></replacecode>
+		</operation>
 	</file>
 	<file name="engine/modules/show.full.php">
 		<operation action="after">
@@ -34,6 +38,10 @@
 	$tpl->copy_template = preg_replace_callback ( "#\\[exists-tags=[\"|\'](.+?)[\"|\']\\](.*?)\\[/exists-tags\\]#is", "check_exists_tags", $tpl->copy_template );
 }]]></replacecode>
 		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[$tpl->set_block( "'\\[tags\\](.*?)\\[/tags\\]'si", "" );]]></searchcode>
+			<replacecode><![CDATA[$tpl->set_block( "'\\[exists-tags=[\"|\'](.+?)[\"|\']\\](.*?)\\[/exists-tags\\]'si", "" );]]></replacecode>
+		</operation>
 	</file>
 	<file name="engine/modules/show.custom.php">
 		<operation action="after">
@@ -41,6 +49,10 @@
 			<replacecode><![CDATA[if (stripos ( $tpl->copy_template, "[exists-tags=" ) !== false) {
 	$tpl->copy_template = preg_replace_callback ( "#\\[exists-tags=[\"|\'](.+?)[\"|\']\\](.*?)\\[/exists-tags\\]#is", "check_exists_tags", $tpl->copy_template );
 }]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[$tpl->set_block( "'\\[tags\\](.*?)\\[/tags\\]'si", "" );]]></searchcode>
+			<replacecode><![CDATA[$tpl->set_block( "'\\[exists-tags=[\"|\'](.+?)[\"|\']\\](.*?)\\[/exists-tags\\]'si", "" );]]></replacecode>
 		</operation>
 	</file>
 	<file name="engine/modules/functions.php">
@@ -58,7 +70,7 @@
 		if (stripos ( $row['tags'], $val ) !== false) {
 		  
 			$return = trim($matches[2]);
-		  break;
+		  	break;
 		}		
 		
 	}
