@@ -17,6 +17,7 @@
  6. [Recover password](https://github.com/TeraMoune/Different-hacks-DLE#recover-passwordxml)
  7. [Added foto tag in email templates](https://github.com/TeraMoune/Different-hacks-DLE#added-foto-tag-in-email-templatesxml)
  8. [Tags count in category](https://github.com/TeraMoune/Different-hacks-DLE#tag-count-news-in-categoryxml)
+ 9. [Check exists tags](https://github.com/TeraMoune/Different-hacks-DLE#check-exists-tagsxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -81,6 +82,14 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 ---
 Добавляет [count-news=cat_id]{c-news}[/count-news] теги в шаблон. Выводит количество новостей независимо от categorymenu.tpl.
 Обязательно включить подсчёт количества новостей. Так же в течении текущего и прошедшего дня будет писать время последнего обновления категории (Учёт только добавленных новостей)
+
+#### check-exists-tags.xml
+---
+  - Шаблон применения: **fullstory.tpl**, **shortstory.tpl** и кастомные шаблоны.
+  
+[exists-tags="tagname1,tagname2,tagname3"] text [/exists-tags] 
+
+Выводит заключённый между блоками содержимое если указанный 'tagname' тег существует в новости. Можно указывать несколько тегов через запятую.
 
 ### Donate
 Для материальной благодарности.
