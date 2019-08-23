@@ -18,7 +18,7 @@
  7.  [Added foto tag in email templates](https://github.com/TeraMoune/Different-hacks-DLE#added-foto-tag-in-email-templatesxml)
  8.  [Tags count in category](https://github.com/TeraMoune/Different-hacks-DLE#tag-count-news-in-categoryxml)
  9.  [Check exists tags](https://github.com/TeraMoune/Different-hacks-DLE#check-exists-tagsxml)
- 10. [Comments functions](https://github.com/TeraMoune/Different-hacks-DLE#comments-functions.xml)
+ 10. [Comments functions](https://github.com/TeraMoune/Different-hacks-DLE#comments-functionsxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -99,8 +99,9 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 Возможность выставления рейтинга имеется только пока пользователь не установился оценку новости, как только он это сделает то элеметы в форме добавления комментария будут недоступны. Рейтинг можно изменить отредактировав комментарий или вовсе удалить.
 
 Используемые теги в шаблоне **comments.tpl**
- [crating]{crating}[/crating] - При выставленном рейтинге принимает значение установленного рейтинга для новости.
- {crating_class} и {offtop_class} - Классы для выделения комментариев.
+
+ - [crating]{crating}[/crating] - При выставленном рейтинге принимает значение установленного рейтинга для новости.
+ - {crating_class} и {offtop_class} - Классы для выделения комментариев.
 
 ### Donate
 Для материальной благодарности.
