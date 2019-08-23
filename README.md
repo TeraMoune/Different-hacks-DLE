@@ -9,15 +9,16 @@
 
 ### Список
 ---
- 1. [Added tags in categorymenu](https://github.com/TeraMoune/Different-hacks-DLE#added-tags-in-categorymenuxml)
- 2. [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml)
- 3. [Edit date comments](https://github.com/TeraMoune/Different-hacks-DLE#edit-date-commentsxml)
- 4. [Auto width column image](https://github.com/TeraMoune/Different-hacks-DLE#auto-width-columnxml)
- 5. [Fast edit meta-title news](https://github.com/TeraMoune/Different-hacks-DLE#fast-edit-meta-title-newsxml)
- 6. [Recover password](https://github.com/TeraMoune/Different-hacks-DLE#recover-passwordxml)
- 7. [Added foto tag in email templates](https://github.com/TeraMoune/Different-hacks-DLE#added-foto-tag-in-email-templatesxml)
- 8. [Tags count in category](https://github.com/TeraMoune/Different-hacks-DLE#tag-count-news-in-categoryxml)
- 9. [Check exists tags](https://github.com/TeraMoune/Different-hacks-DLE#check-exists-tagsxml)
+ 1.  [Added tags in categorymenu](https://github.com/TeraMoune/Different-hacks-DLE#added-tags-in-categorymenuxml)
+ 2.  [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml)
+ 3.  [Edit date comments](https://github.com/TeraMoune/Different-hacks-DLE#edit-date-commentsxml)
+ 4.  [Auto width column image](https://github.com/TeraMoune/Different-hacks-DLE#auto-width-columnxml)
+ 5.  [Fast edit meta-title news](https://github.com/TeraMoune/Different-hacks-DLE#fast-edit-meta-title-newsxml)
+ 6.  [Recover password](https://github.com/TeraMoune/Different-hacks-DLE#recover-passwordxml)
+ 7.  [Added foto tag in email templates](https://github.com/TeraMoune/Different-hacks-DLE#added-foto-tag-in-email-templatesxml)
+ 8.  [Tags count in category](https://github.com/TeraMoune/Different-hacks-DLE#tag-count-news-in-categoryxml)
+ 9.  [Check exists tags](https://github.com/TeraMoune/Different-hacks-DLE#check-exists-tagsxml)
+ 10. [Comments functions](https://github.com/TeraMoune/Different-hacks-DLE#comments-functions.xml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -90,6 +91,16 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 [exists-tags="tagname1,tagname2,tagname3"] text [/exists-tags] 
 
 Выводит заключённый между блоками содержимое если указанный 'tagname' тег существует в новости. Можно указывать несколько тегов через запятую.
+
+#### comments-functions.xml
+---
+Добавляет в форму добавления комментария пару элементов. Возможность выставления рейтинга новости при добавлении комментария или выбрать комментарий оффтопом. Добавленный комментарий с выбранным рейтингом можно выделить среди других, так же как и оффтоп. В самом комментарии можно вывести выбранную оценку.
+
+Возможность выставления рейтинга имеется только пока пользователь не установился оценку новости, как только он это сделает то элеметы в форме добавления комментария будут недоступны. Рейтинг можно изменить отредактировав комментарий или вовсе удалить.
+
+Используемые теги в шаблоне **comments.tpl**
+ [crating]{crating}[/crating] - При выставленном рейтинге принимает значение установленного рейтинга для новости.
+ {crating_class} и {offtop_class} - Классы для выделения комментариев.
 
 ### Donate
 Для материальной благодарности.
