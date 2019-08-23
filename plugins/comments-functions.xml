@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Comments functions</name>
+	<description>Установка рейтинга новости при добавлении комментария, и метка комментария как оффтоп</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[ALTER TABLE `{prefix}_comments` ADD `crating` int(1) NOT NULL Default '0', ADD `offtop` int(1) NOT NULL Default '0';]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{prefix}_comments` DROP `crating`, `offtop`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/editor/comments.php">
+		<operation action="after">
+			<searchcode><![CDATA[if ( $allow_subscribe ) $wysiwyg .= "<br /><label class=\"comments_subscribe\"><input type=\"checkbox\" name=\"allow_subscribe\" id=\"allow_subscribe\" value=\"1\" />" . $lang['c_subscribe'] . "</label><br />";]]></searchcode>
+			<replacecode><![CDATA[if( $is_logged ) {
+  
+  $find_rated = $db->super_query( "SELECT rating FROM " . PREFIX . "_comments WHERE post_id ='{$newsid}' AND autor = '" . $db->safesql($member_id['name']) . "' AND crating != 0" );
+  
+  if( !$find_rated ) { 
+    
+	$wysiwyg .= "<div align=\"left\" style=\"padding-top:5px;\">";
+    
+    if( !$config['rating_type'] ) {
+
+        $wysiwyg .= "<br /><label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"1\" />1</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"2\" />2</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"3\" />3</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"4\" />4</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"5\" />5</label><br />";
+
+    } else if($config['rating_type'] == "1" ) {
+
+        $wysiwyg .= "<br /><label class=\"comments_crating\"><input type=\"checkbox\" name=\"crating\" value=\"1\" />Положительно</label><br />";
+
+    } else if( $config['rating_type'] == "2" OR $config['rating_type'] == "3" ) {
+
+        $wysiwyg .= "<br /><label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"-1\" />Отрицательно</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"1\" />Положительно</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"0\" />Нейтрально</label><br />";
+
+    }
+    
+  	$wysiwyg .= "<br /><label class=\"comments_offtop\"><input type=\"checkbox\" name=\"offtop\" value=\"1\" />Оффтоп</label></div>";
+    
+  } else $wysiwyg .= "<label class=\"comments_offtop\"><input type=\"checkbox\" name=\"offtop\" value=\"1\" />Оффтоп</label>";
+  
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/addcomments.php">
+		<operation action="after">
+			<searchcode><![CDATA[	$comments = $parse->BB_Parse( $parse->process( trim($_POST['comments'] )), false );
+}]]></searchcode>
+			<replacecode><![CDATA[$find_rated = $db->super_query( "SELECT post_id, rating FROM " . PREFIX . "_comments WHERE post_id ='{$post_id}' AND autor = '" . $db->safesql($member_id['name']) . "' AND crating != 0" );
+if( !$find_rated ) {
+  
+  $crating = intval($_POST['crating']);
+  $go_rate = true;
+  if ( !$config['rating_type'] ) {
+      if( $go_rate > 5 or $go_rate < 1 ) $go_rate = false;
+  }
+
+  if ( $config['rating_type'] == "1" ) {
+      $go_rate = 1;
+  }
+
+  if ( $config['rating_type'] == "2" OR $config['rating_type'] == "3") {
+      if( $go_rate != 1 AND $go_rate != -1 ) $go_rate = false;
+  }  
+  
+} else { 
+  
+  $go_rate = false; 
+  $crating = 0; 
+  
+}
+
+$offtop = intval($_POST['offtop']);]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[text='{$comments}',]]></searchcode>
+			<replacecode><![CDATA[text='{$comments}', crating='{$crating}', offtop='{$offtop}',]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[if( $is_logged ) $db->query( "INSERT INTO " . PREFIX . "_comments (post_id, media_id, user_id, date, autor, email, text, ip, is_register, approve, parent) values ('{$post_id}', '{$media_id}', '{$member_id['user_id']}', '{$time}', '{$name}', '{$mail}', '{$comments}', '{$_IP}', '1', '{$where_approve}', '{$parent}')" );
+else $db->query( "INSERT INTO " . PREFIX . "_comments (post_id, media_id, date, autor, email, text, ip, is_register, approve, parent) values ('{$post_id}', '{$media_id}', '{$time}', '{$name}', '{$mail}', '{$comments}', '{$_IP}', '0', '{$where_approve}', '{$parent}')" );]]></searchcode>
+			<replacecode><![CDATA[if( $is_logged ) $db->query( "INSERT INTO " . PREFIX . "_comments (post_id, media_id, user_id, date, autor, email, text, ip, is_register, approve, parent, crating, offtop) values ('{$post_id}', '{$media_id}', '{$member_id['user_id']}', '{$time}', '{$name}', '{$mail}', '{$comments}', '{$_IP}', '1', '{$where_approve}', '{$parent}', '{$crating}', '{$offtop}')" );
+else $db->query( "INSERT INTO " . PREFIX . "_comments (post_id, media_id, date, autor, email, text, ip, is_register, approve, parent, crating, offtop) values ('{$post_id}', '{$media_id}', '{$time}', '{$name}', '{$mail}', '{$comments}', '{$_IP}', '0', '{$where_approve}', '{$parent}', '{$crating}', '{$offtop}')" );]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$added_comments_id = $db->insert_id();]]></searchcode>
+			<replacecode><![CDATA[if( $go_rate ) {
+
+$member_id['name'] = $db->safesql($member_id['name']);
+
+if( $is_logged ) $where = "member = '{$member_id['name']}'";
+else $where = "ip ='{$_IP}'";  
+  
+$row_logs = $db->super_query( "SELECT news_id, rating FROM " . PREFIX . "_logs WHERE news_id ='{$post_id}' AND {$where}" );
+
+if( !$row_logs['news_id'] ) {
+
+	$allrate = $db->super_query( "SELECT allow_rate, rating, user_id FROM " . PREFIX . "_post_extras WHERE news_id ='{$post_id}'" );  
+
+	if( $config['rating_type'] == "1" AND $allrate['rating'] < 0 ) {
+		
+		$db->query( "UPDATE " . PREFIX . "_post_extras SET rating='{$crating}', vote_num='1' WHERE news_id ='{$post_id}'" );
+		
+	} elseif ( !$config['rating_type'] AND $allrate['rating'] < 0 ) {
+		
+		$db->query( "UPDATE " . PREFIX . "_post_extras SET rating='{$crating}', vote_num='1' WHERE news_id ='{$post_id}'" );
+		
+	} else {
+		
+		$db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating+'{$crating}', vote_num=vote_num+1 WHERE news_id ='{$post_id}'" );
+		
+	}  
+ 
+	if ( $db->get_affected_rows() )	{
+		if( $is_logged ) $user_name = $member_id['name'];
+		else $user_name = "noname";
+		
+		$db->query( "INSERT INTO " . PREFIX . "_logs (news_id, ip, member, rating) values ('{$post_id}', '{$_IP}', '{$user_name}', '{$crating}')" );
+
+		if ( $config['allow_alt_url'] AND !$config['seo_type'] ) $cprefix = "full_"; else $cprefix = "full_".$post_id;	
+	
+		clear_cache( array( 'news_', $cprefix ) );
+
+	}
+  
+} elseif( $row_logs['rating'] AND $row_logs['rating'] != $crating ) {
+	
+	$allrate = $db->super_query( "SELECT rating, user_id FROM " . PREFIX . "_post_extras WHERE news_id ='{$post_id}'" );
+	
+	if( $config['rating_type'] == "1" AND $allrate['rating'] < 0 ) {
+		
+		$db->query( "UPDATE " . PREFIX . "_post_extras SET rating='{$crating}', vote_num='1' WHERE news_id ='{$post_id}'" );
+		
+	} elseif ( !$config['rating_type'] AND $allrate['rating'] < 0 ) {
+		
+		$db->query( "UPDATE " . PREFIX . "_post_extras SET rating='{$crating}', vote_num='1' WHERE news_id ='{$post_id}'" );
+		
+	} else {
+		
+		$db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating-'{$row_logs['rating']}' WHERE news_id ='{$post_id}'" );
+		$db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating+'{$crating}' WHERE news_id ='{$post_id}'" );
+		
+	}
+	
+	$db->query( "UPDATE " . PREFIX . "_logs SET rating='{$crating}' WHERE news_id ='{$post_id}' AND {$where}" );
+	
+	if ( $config['allow_alt_url'] AND !$config['seo_type'] ) $cprefix = "full_"; else $cprefix = "full_".$post_id;
+	clear_cache( array( 'news_', $cprefix ) );
+	
+}
+
+$db->close();
+
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/functions.php">
+		<operation action="replace">
+			<searchcode><![CDATA[function deletecomments( $id ) {
+	global $config, $db;]]></searchcode>
+			<replacecode><![CDATA[function deletecomments( $id ) {
+	global $config, $db, $member_id;]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$row = $db->super_query( "SELECT id, post_id, user_id, is_register, approve FROM " . PREFIX . "_comments WHERE id = '{$id}'" );]]></searchcode>
+			<replacecode><![CDATA[$member_id['name'] = $db->safesql($member_id['name']);
+
+$row_logs = $db->super_query( "SELECT id, rating FROM " . PREFIX . "_logs WHERE news_id ='{$row['post_id']}' AND member = '{$member_id['name']}'" );
+if( $row_logs ) {
+  
+  if( $row_logs['rating'] == 1  ) {
+    	$db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating-1, vote_num=vote_num-1 WHERE news_id='{$row['post_id']}'" );
+  } elseif( $row_logs['rating'] == -1 ) {
+    	$db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating+1, vote_num=vote_num-1 WHERE news_id='{$row['post_id']}'" );
+  } else {
+    	$db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating-{$row_logs['rating']}, vote_num=vote_num-1 WHERE news_id='{$row['post_id']}'" );
+  }
+    
+    
+  $db->query( "DELETE FROM " . PREFIX . "_logs WHERE id = '{$row_logs['id']}'" );
+  
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/ajax/editcomments.php">
+		<operation action="before">
+			<searchcode><![CDATA[if ( !$area) $area = "news";]]></searchcode>
+			<replacecode><![CDATA[function installationRadio($id, $options){
+	$source = str_replace('value="'.$id.'"', 'value="'.$id.'" checked', $options);
+	return $source;
+}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[text, is_register]]></searchcode>
+			<replacecode><![CDATA[text, is_register, crating, offtop]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[if( $config['allow_comments_wysiwyg'] < 1 ) {]]></searchcode>
+			<replacecode><![CDATA[if( $row['crating'] ) {
+  
+  if( !$config['rating_type'] ) {
+
+      $crating = installationRadio($row['crating'], "<label class=\"comments_crating\"><input type=\"radio\" name=\"crating_{$id}\" value=\"1\" />1</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating_{$id}\" value=\"2\" />2</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating_{$id}\" value=\"3\" />3</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating_{$id}\" value=\"4\" />4</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating_{$id}\" value=\"5\" />5</label>");
+
+  } else if($config['rating_type'] == "1" ) {
+
+      if($row['crating']) $checked = " checked";
+      else $checked = "";
+      $crating = "<label class=\"comments_crating\"><input type=\"checkbox\" name=\"crating_{$id}\" value=\"1\"{$checked}/>Положительно</label><br />";
+
+  } else if( $config['rating_type'] == "2" OR $config['rating_type'] == "3" ) {
+
+      $crating = installationRadio($row['crating'], "<label class=\"comments_crating\"><input type=\"radio\" name=\"crating_{$id}\" value=\"-1\" />Отрицательно</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating_{$id}\" value=\"1\" />Положительно</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating_{$id}\" value=\"0\" />Нейтрально</label>");
+
+  }
+  
+}
+
+if($row['offtop']) $checked_offtop = " checked";
+else $checked_offtop = "";
+
+$offtop = "<label class=\"comments_offtop\"><input type=\"checkbox\" name=\"offtop_{$id}\" value=\"1\"{$checked_offtop}/>Оффтоп</label><br />";]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[<textarea name="dleeditcomments{$id}" id="dleeditcomments{$id}" rows="10" cols="50" {$params}>{$comm_txt}</textarea><br>]]></searchcode>
+			<replacecode><![CDATA[<div align="left" style="padding-top:5px;">
+{$crating}
+{$offtop}
+</div>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$comm_txt = trim( $parse->BB_Parse( $parse->process( $_POST['comm_txt'] ), $use_html ) );]]></searchcode>
+			<replacecode><![CDATA[$crating = intval($_POST['crating']);
+$offtop = intval($_POST['offtop']);]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$db->query( "UPDATE " . PREFIX . "_{$allowed_areas[$area]['comments_table']} SET text='$comm_update', approve='1' WHERE id = '$id'" );]]></searchcode>
+			<replacecode><![CDATA[$db->query( "UPDATE " . PREFIX . "_{$allowed_areas[$area]['comments_table']} SET text='$comm_update', approve='1', crating='$crating', offtop='$offtop' WHERE id = '$id'" );
+
+if( $row['crating'] != $crating ) {
+  
+  $member_id['name'] = $db->safesql($member_id['name']);
+
+  if( $is_logged ) $where = "member = '{$member_id['name']}'";
+  else $where = "ip ='{$_IP}'";  
+
+  $row_logs = $db->super_query( "SELECT news_id, rating FROM " . PREFIX . "_logs WHERE news_id ='{$row['post_id']}' AND {$where}" );
+
+  if( !$row_logs['news_id'] ) {
+
+      $allrate = $db->super_query( "SELECT allow_rate, rating, user_id FROM " . PREFIX . "_post_extras WHERE news_id ='{$row['post_id']}'" );  
+
+      if( $config['rating_type'] == "1" AND $allrate['rating'] < 0 ) {
+
+          $db->query( "UPDATE " . PREFIX . "_post_extras SET rating='{$crating}', vote_num='1' WHERE news_id ='{$row['post_id']}'" );
+
+      } elseif ( !$config['rating_type'] AND $allrate['rating'] < 0 ) {
+
+          $db->query( "UPDATE " . PREFIX . "_post_extras SET rating='{$crating}', vote_num='1' WHERE news_id ='{$row['post_id']}'" );
+
+      } else {
+
+          $db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating+'{$crating}', vote_num=vote_num+1 WHERE news_id ='{$row['post_id']}'" );
+
+      }  
+
+      if ( $db->get_affected_rows() )	{
+          if( $is_logged ) $user_name = $member_id['name'];
+          else $user_name = "noname";
+
+          $db->query( "INSERT INTO " . PREFIX . "_logs (news_id, ip, member, rating) values ('{$row['post_id']}', '{$_IP}', '{$user_name}', '{$crating}')" );
+
+          if ( $config['allow_alt_url'] AND !$config['seo_type'] ) $cprefix = "full_"; else $cprefix = "full_".$row['post_id'];	
+
+          clear_cache( array( 'news_', $cprefix ) );
+
+      }
+
+  } elseif( $row_logs['rating'] AND $row_logs['rating'] != $crating ) {
+
+      $allrate = $db->super_query( "SELECT rating, user_id FROM " . PREFIX . "_post_extras WHERE news_id ='{$row['post_id']}'" );
+
+      if( $config['rating_type'] == "1" AND $allrate['rating'] < 0 ) {
+
+          $db->query( "UPDATE " . PREFIX . "_post_extras SET rating='{$crating}', vote_num='1' WHERE news_id ='{$row['post_id']}'" );
+
+      } elseif ( !$config['rating_type'] AND $allrate['rating'] < 0 ) {
+
+          $db->query( "UPDATE " . PREFIX . "_post_extras SET rating='{$crating}', vote_num='1' WHERE news_id ='{$row['post_id']}'" );
+
+      } else {
+
+          $db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating-'{$row_logs['rating']}' WHERE news_id ='{$row['post_id']}'" );
+          $db->query( "UPDATE " . PREFIX . "_post_extras SET rating=rating+'{$crating}' WHERE news_id ='{$row['post_id']}'" );
+
+      }
+
+      $db->query( "UPDATE " . PREFIX . "_logs SET rating='{$crating}' WHERE news_id ='{$row['post_id']}' AND {$where}" );
+
+      if ( $config['allow_alt_url'] AND !$config['seo_type'] ) $cprefix = "full_"; else $cprefix = "full_".$row['post_id'];
+      clear_cache( array( 'news_', $cprefix ) );
+
+  }
+
+  $db->close();  
+  
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.full.php">
+		<operation action="replace">
+			<searchcode><![CDATA[text, ip, is_register,]]></searchcode>
+			<replacecode><![CDATA[text, ip, is_register, crating, offtop,]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/classes/comments.class.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->set( '[profile]', "" );
+$tpl->set( '[/profile]', "" );]]></searchcode>
+			<replacecode><![CDATA[$tpl->set( '{crating}', "" );
+$tpl->set_block( "'\\[crating\\](.*?)\\[/crating\\]'si", "" );]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->set( '{login}', $row['name'] );
+$tpl->set( '[/profile]', "</a>" );]]></searchcode>
+			<replacecode><![CDATA[$tpl->set( '{crating}', $row['crating'] );
+$tpl->set( '[crating]', "" );
+$tpl->set( '[/crating]', "" );
+
+if( $row['crating'] >= 1 ) $tpl->set( '{crating_class}', " clike" );
+else if( $row['crating'] == -1 ) $tpl->set( '{crating_class}', " cdislike" );
+else $tpl->set( '{crating_class}', "" );  
+
+if( $row['offtop'] ) $tpl->set( '{offtop_class}', " offtop" );
+else $tpl->set( '{offtop_class}', "" );]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/ajax/addcomments.php">
+		<operation action="replace">
+			<searchcode><![CDATA[text, ip, is_register,]]></searchcode>
+			<replacecode><![CDATA[text, ip, is_register, crating, offtop,]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/bbcode.php">
+		<operation action="after">
+			<searchcode><![CDATA[if ( isset($allow_subscribe) AND $allow_subscribe ) $code .= "<br /><label class=\"comments_subscribe\"><input type=\"checkbox\" name=\"allow_subscribe\" id=\"allow_subscribe\" value=\"1\" />" . $lang['c_subscribe'] . "</label><br />";]]></searchcode>
+			<replacecode><![CDATA[if( $is_logged ) {
+  
+  $find_rated = $db->super_query( "SELECT rating FROM " . PREFIX . "_comments WHERE post_id ='{$newsid}' AND autor = '" . $db->safesql($member_id['name']) . "' AND crating != 0" );
+  
+  if( !$find_rated ) { 
+    
+	$code .= "<div align=\"left\" style=\"padding-top:5px;\">";
+    
+    if( !$config['rating_type'] ) {
+
+        $code .= "<br /><label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"1\" />1</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"2\" />2</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"3\" />3</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"4\" />4</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"5\" />5</label><br />";
+
+    } else if($config['rating_type'] == "1" ) {
+
+        $code .= "<br /><label class=\"comments_crating\"><input type=\"checkbox\" name=\"crating\" value=\"1\" />Положительно</label><br />";
+
+    } else if( $config['rating_type'] == "2" OR $config['rating_type'] == "3" ) {
+
+        $code .= "<br /><label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"-1\" />Отрицательно</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"1\" />Положительно</label> <label class=\"comments_crating\"><input type=\"radio\" name=\"crating\" value=\"0\" />Нейтрально</label><br />";
+
+    }
+    
+  	$code .= "<br /><label class=\"comments_offtop\"><input type=\"checkbox\" name=\"offtop\" value=\"1\" />Оффтоп</label></div>";
+    
+  } else $code .= "<label class=\"comments_offtop\"><input type=\"checkbox\" name=\"offtop\" value=\"1\" />Оффтоп</label>";
+  
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
