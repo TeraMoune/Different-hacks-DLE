@@ -19,6 +19,7 @@
  8.  [Tags count in category](https://github.com/TeraMoune/Different-hacks-DLE#tag-count-news-in-categoryxml)
  9.  [Check exists tags](https://github.com/TeraMoune/Different-hacks-DLE#check-exists-tagsxml)
  10. [Comments functions](https://github.com/TeraMoune/Different-hacks-DLE#comments-functionsxml)
+ 11. [Aviable date](https://github.com/TeraMoune/Different-hacks-DLE#aviable-datexml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -102,6 +103,14 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 
  - [crating]{crating}[/crating] - При выставленном рейтинге принимает значение установленного рейтинга для новости.
  - {crating_class} и {offtop_class} - Классы для выделения комментариев.
+
+#### aviable-date.xml
+---
+  - Шаблон применения: **fullstory.tpl**, **shortstory.tpl**.
+  
+[aviable_date="01.09.2019|yesterday|tomorrow"] text [/aviable_date] 
+
+Выводит заключённый между блоками содержимое если указанная дата ровна дате публикации новости. Можно указать tomorrow или yesterday (Завтра и Вчера) tomorrow выведет текст если новость опубликована днём ранее, а yesterday обратный параметр и выведет если новость опубликуют завтра.
 
 ### Donate
 Для материальной благодарности.
