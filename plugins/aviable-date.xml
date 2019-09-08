@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Aviable date</name>
+	<description>Аналог тегу aviable работающий с датой новости</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/main.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->compile ( 'main' );]]></searchcode>
+			<replacecode><![CDATA[if (stripos ( $tpl->result['main'], "[aviable_date" ) !== false AND $news_found) {
+		
+  $tpl->result['main'] = preg_replace_callback ( "#\\[aviable_date=['\"](.+?)['\"]\\](.*?)\\[/aviable_date\\]#is", "check_date", $tpl->result['main'] );
+  
+} else $tpl->result['main'] = preg_replace ( "#\\[aviable_date=['\"](.+?)['\"]\\](.*?)\\[/aviable_date\\]#is", "", $tpl->result['main'] );]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/functions.php">
+		<operation action="before">
+			<searchcode><![CDATA[function dle_session( $sid = false ) {]]></searchcode>
+			<replacecode><![CDATA[function check_date($matches) {
+ 	global $curr_news_date, $_TIME;
+
+ 	if (is_array($matches)) {
+		
+		$params = $matches[1];
+		$block = $matches[2];
+		
+		if( $params == 'yesterday' ) {
+			
+			if( date("Y-m-d", ($_TIME - 86400)) != date("Y-m-d", $curr_news_date) ) $block = "";
+			
+		} else if( $params == 'tomorrow' ) {
+			
+			if( date("Y-m-d", ($_TIME + 86400)) != date("Y-m-d", $curr_news_date) ) $block = "";
+			
+		} else {
+			
+			$date1 = strtotime($params);
+			if( date("Y-m-d", $date1) != date("Y-m-d", $curr_news_date) ) $block = "";
+			
+		}
+		
+    } else $block = "";
+  
+  	return $block;
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.full.php">
+		<operation action="replace">
+			<searchcode><![CDATA[$news_date = $row['date'];
+$tpl->copy_template = preg_replace_callback ( "#\{date=(.+?)\}#i", "formdate", $tpl->copy_template );]]></searchcode>
+			<replacecode><![CDATA[$news_date = $curr_news_date = $row['date'];
+$tpl->copy_template = preg_replace_callback ( "#\{date=(.+?)\}#i", "formdate", $tpl->copy_template );]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
