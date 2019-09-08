@@ -69,4 +69,12 @@ $tpl->copy_template = preg_replace_callback ( "#\{date=(.+?)\}#i", "formdate", $
 $tpl->copy_template = preg_replace_callback ( "#\{date=(.+?)\}#i", "formdate", $tpl->copy_template );]]></replacecode>
 		</operation>
 	</file>
+	<file name="engine/modules/show.short.php">
+		<operation action="replace">
+			<searchcode><![CDATA[$news_date = $row['date'];
+$tpl->copy_template = preg_replace_callback ( "#\{date=(.+?)\}#i", "formdate", $tpl->copy_template );]]></searchcode>
+			<replacecode><![CDATA[$news_date = $curr_news_date = $row['date'];
+$tpl->copy_template = preg_replace_callback ( "#\{date=(.+?)\}#i", "formdate", $tpl->copy_template );]]></replacecode>
+		</operation>
+	</file>
 </dleplugin>
