@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Fast edit extension</name>
+	<description>Дополнительные поля в быстром редактировании новости. Изменение категории, тегов, даты, мета данных.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/ajax/editnews.php">
+		<operation action="replace">
+			<searchcode><![CDATA[e.reason]]></searchcode>
+			<replacecode><![CDATA[p.metatitle, e.reason, p.alt_name, p.tags, p.keywords, p.descr]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$cat_list = explode( ',', $row['category'] );]]></searchcode>
+			<replacecode><![CDATA[$categories_list = CategoryNewsSelection( $cat_list, 0 );
+if( $config['allow_multi_category'] ) {
+			
+	$cats = "<select data-placeholder=\"{$lang['addnews_cat_sel']}\" name=\"catlist\" id=\"fast_category\" style=\"width:350px;height:140px;\" multiple=\"multiple\">";
+		
+} else {
+			
+	$cats = "<select data-placeholder=\"{$lang['addnews_cat_sel']}\" name=\"catlist\" id=\"fast_category\" style=\"width:350px;\">";
+
+}
+		
+$cats .= $categories_list;
+$cats .= "</select>";]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[<div class="xfieldsrow"><div class="xfieldscolleft">{$lang['reason']}</div><div class="xfieldscolright"><input type="text" name="reason" class="quick-edit-text" value="{$row['reason']}"></div></div>]]></searchcode>
+			<replacecode><![CDATA[<div class="xfieldsrow"><div class="xfieldscolleft">Категории</div><div class="xfieldscolright">{$cats}</div></div>
+<div class="xfieldsrow"><div class="xfieldscolleft">Дата</div><div class="xfieldscolright"><input type="text" name="date" value="{$row['date']}" class="quick-edit-text" autocomplete="off"></div></div>
+<div class="xfieldsrow"><div class="xfieldscolleft">Облоко тегов</div><div class="xfieldscolright"><input type="text" name="tags" id="fast_edit_tags" value="{$row['tags']}" class="quick-edit-text" autocomplete="off"></div></div>
+<div class="xfieldsrow"><div class="xfieldscolleft">URL новости</div><div class="xfieldscolright"><input type="text" name="alt_name" value="{$row['alt_name']}" class="quick-edit-text" autocomplete="off"></div></div>
+<div class="xfieldsrow"><div class="xfieldscolleft">Метатег Title</div><div class="xfieldscolright"><input type="text" name="meta_title" class="quick-edit-text" value="{$row['metatitle']}" autocomplete="off"></div></div>
+<div class="xfieldsrow"><div class="xfieldscolleft">Метатег Description</div><div class="xfieldscolright"><input type="text" name="descr" value="{$row['descr']}" class="quick-edit-text" autocomplete="off"></div></div>  
+<div class="xfieldsrow"><div class="xfieldscolleft">Метатег Key</div><div class="xfieldscolright"><input type="text" name="keywords" class="quick-edit-text" value="{$row['keywords']}" autocomplete="off"></div></div>]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[function xfimagedelete( xfname, xfvalue ) {]]></searchcode>
+			<replacecode><![CDATA[function split( val ) {
+	return val.split( /,\s*/ );
+}
+	
+function extractLast( term ) {
+	return split( term ).pop();
+}
+setTimeout(function(){ 
+ $('#fast_category').chosen({allow_single_deselect:true, no_results_text: 'Ничего не найдено'}); 
+ $('#fast_edit_tags').autocomplete({
+	source: function( request, response ) {
+		$.getJSON( dle_root + 'engine/ajax/controller.php?mod=find_tags&user_hash=' + dle_login_hash, {
+			term: extractLast( request.term )
+		}, response );
+	},
+	search: function() {
+		var term = extractLast( this.value );
+		if ( term.length < 3 ) {
+			return false;
+		}
+	},
+	focus: function() {
+		return false;
+	},
+	select: function( event, ui ) {
+		var terms = split( this.value );
+		terms.pop();
+		terms.push( ui.item.value );
+		terms.push( '' );
+		this.value = terms.join( ', ' );
+		return false;
+	}
+});                    
+},50);]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$editreason = $db->safesql( htmlspecialchars( strip_tags( stripslashes( trim( $_POST['reason'] ) ) ), ENT_QUOTES, $config['charset'] ) );]]></searchcode>
+			<replacecode><![CDATA[$metatitle = trim( htmlspecialchars( strip_tags( stripslashes($_POST['meta_title'] ) ), ENT_COMPAT, $config['charset'] ) );
+$metatitle = $db->safesql($metatitle);
+if( !isset($_POST['catlist']) ) $category_list = '0';
+else $category_list = trim( htmlspecialchars( strip_tags( stripslashes($_POST['catlist'] ) ), ENT_COMPAT, $config['charset'] ) );
+$alt_name = trim($_POST['alt_name']);
+if(!$alt_name) $alt_name = totranslit( stripslashes( $_POST['title'] ), true, false );
+else $alt_name = totranslit( stripslashes( $alt_name ), true, false );
+if( dle_strlen( $alt_name, $config['charset'] ) > 190 ) {
+	$alt_name = dle_substr( $alt_name, 0, 190, $config['charset'] );
+}
+$alt_name = $db->safesql( $alt_name );
+$keywords = trim( htmlspecialchars( strip_tags( stripslashes($_POST['keywords'] ) ), ENT_COMPAT, $config['charset'] ) );
+$descr = trim( htmlspecialchars( strip_tags( stripslashes($_POST['descr'] ) ), ENT_COMPAT, $config['charset'] ) );
+if( @preg_match( "/[\||\<|\>]/", $_POST['tags'] ) ) $_POST['tags'] = "";
+else $_POST['tags'] = @$db->safesql( htmlspecialchars( strip_tags( stripslashes( trim( $_POST['tags'] ) ) ), ENT_COMPAT, $config['charset'] ) );
+if ( $_POST['tags'] ) {
+
+	$temp_array = array();
+	$tags_array = array();
+	$temp_array = explode (",", $_POST['tags']);
+
+	if (count($temp_array)) {
+
+		foreach ( $temp_array as $value ) {
+			if( trim($value) ) $tags_array[] = trim( $value );
+		}
+
+	}
+
+	if ( count($tags_array) ) $_POST['tags'] = implode(", ", $tags_array); else $_POST['tags'] = "";
+
+}
+$date = $db->safesql( htmlspecialchars( strip_tags( stripslashes( trim( $_POST['date'] ) ) ), ENT_QUOTES, $config['charset'] ) );]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[title='{$_POST['title']}',]]></searchcode>
+			<replacecode><![CDATA[title='{$_POST['title']}', metatitle='{$metatitle}', category='$category_list', descr='{$descr}', alt_name='{$date}', tags='{$_POST['tags']}', keywords='{$keywords}', date='{$date}',]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
