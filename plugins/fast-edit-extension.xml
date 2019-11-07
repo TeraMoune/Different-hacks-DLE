@@ -125,7 +125,7 @@ $date = $db->safesql( htmlspecialchars( strip_tags( stripslashes( trim( $_POST['
 		</operation>
 		<operation action="replace">
 			<searchcode><![CDATA[title='{$_POST['title']}',]]></searchcode>
-			<replacecode><![CDATA[title='{$_POST['title']}', metatitle='{$metatitle}', category='$category_list', descr='{$descr}', alt_name='{$date}', tags='{$_POST['tags']}', keywords='{$keywords}', date='{$date}',]]></replacecode>
+			<replacecode><![CDATA[title='{$_POST['title']}', metatitle='{$metatitle}', category='$category_list', descr='{$descr}', alt_name='{$alt_name}', tags='{$_POST['tags']}', keywords='{$keywords}', date='{$date}',]]></replacecode>
 		</operation>
 	</file>
 </dleplugin>
