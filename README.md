@@ -68,9 +68,20 @@ CSS оформление взять в файле `engine/skins/stylesheets/appl
 ---
 При загрузке картинок под выбором выравнивания будет два параметра, колонки и ширины. Установив в колонке число и выбрав все или часть картинок то им будет задан параметр `width` таким образом, чтобы уместилось в одну линию указанное число картинок. А ширина задаёт одинаковую ширину вставляемым изображениям.
 
-#### Fast-edit-meta-title-news.xml
+#### Fast-edit-extension.xml
 ---
 Дополнительные поля в быстром редактировании новости которых нету. Изменение категории, тегов, даты, мета данных и ЧПУ ссылки.
+
+В файле `dle_js.js` 
+найти
+```JavaScript
+params[value.name] = value.value;
+```
+заменить на
+```Javascript
+if( params[value.name] ) params[value.name] = params[value.name] + ',' + value.value;
+else params[value.name] = value.value;
+```
 
 #### recover-password.xml
 ---
