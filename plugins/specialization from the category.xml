@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Специализация из категории</name>
+	<description>{specialization} | {specialization-link}</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[ALTER TABLE `{userprefix}_users` ADD `specialization` varchar(190) NOT NULL default '0';]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{userprefix}_users` DROP `specialization`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/profile.php">
+		<operation action="before">
+			<searchcode><![CDATA[if( $row['comm_num'] ) {]]></searchcode>
+			<replacecode><![CDATA[if( ! $row['specialization'] ) {
+	$my_specialization = "---";
+	$my_specialization_link = "---";
+} else {
+			
+	$my_specialization = array ();
+	$my_specialization_link = array ();
+	$specialization_list = explode( ',', $row['specialization'] );
+		
+	if( count( $specialization_list ) == 1 ) {
+				
+		$my_specialization[] = $cat_info[$specialization_list[0]]['name'];
+				
+		$my_specialization_link = get_categories( $specialization_list[0], $config['category_separator'] );
+			
+	} else {
+				
+		foreach ( $specialization_list as $element ) {
+					
+			if( $element ) {
+				$my_specialization[] = $cat_info[$element]['name'];
+				if( $config['allow_alt_url'] ) $my_specialization_link[] = "<a href=\"" . $config['http_home_url'] . get_url( $element ) . "/\">{$cat_info[$element]['name']}</a>";
+				else $my_specialization_link[] = "<a href=\"$PHP_SELF?do=cat&amp;category={$cat_info[$element]['alt_name']}\">{$cat_info[$element]['name']}</a>";
+			}
+		}
+				
+		$my_specialization_link = implode( " {$config['category_separator']} ", $my_specialization_link );
+	}
+			
+	$my_specialization = implode( " {$config['category_separator']} ", $my_specialization );
+}
+
+$tpl->set( '{specialization}', $my_specialization );
+$tpl->set( '{specialization-link}', $my_specialization_link );]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->set( '{timezones}', $timezoneselect );]]></searchcode>
+			<replacecode><![CDATA[if( $row['specialization'] ) {
+  
+  $specialization_list = explode( ',', $row['specialization'] );
+  $specialization_list = CategoryNewsSelection( $specialization_list, 0 );
+  
+} else $specialization_list = CategoryNewsSelection( 0, 0 );
+
+$spec = "<select data-placeholder=\"Укажите специализацию\" name=\"speclist[]\" id=\"specialization\" style=\"width:350px;height:140px;\" multiple=\"multiple\">";
+$spec .= $specialization_list;
+$spec .= "</select>";
+$onload_scripts[] = "$('#specialization').chosen({allow_single_deselect:true, no_results_text: 'Ничего не найдено'});";
+$tpl->set( '{specialization-select}', $spec );]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$land = $db->safesql( $parse->process( $_POST['land'] ) );]]></searchcode>
+			<replacecode><![CDATA[if( !is_array($_POST['speclist']) ) $_POST['speclist'] = array ();
+		
+if( !count( $_POST['speclist'] ) ) {
+			
+	$speclist = array ();
+	$speclist[] = '0';
+			
+} else $speclist = $_POST['speclist'];
+
+$specialization_list = array();
+	
+foreach ( $speclist as $value ) {
+	$specialization_list[] = intval($value);
+}
+
+$specialization_list = $db->safesql( implode( ',', $specialization_list ) );]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[land='$land',]]></searchcode>
+			<replacecode><![CDATA[land='$land', specialization='$specialization_list',]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/ajax/profile.php">
+		<operation action="before">
+			<searchcode><![CDATA[if( $row['comm_num'] ) {]]></searchcode>
+			<replacecode><![CDATA[if( ! $row['specialization'] ) {
+	$my_specialization = "---";
+	$my_specialization_link = "---";
+} else {
+			
+	$my_specialization = array ();
+	$my_specialization_link = array ();
+	$specialization_list = explode( ',', $row['specialization'] );
+		
+	if( count( $specialization_list ) == 1 ) {
+				
+		$my_specialization[] = $cat_info[$specialization_list[0]]['name'];
+				
+		$my_specialization_link = get_categories( $specialization_list[0], $config['category_separator'] );
+			
+	} else {
+				
+		foreach ( $specialization_list as $element ) {
+					
+			if( $element ) {
+				$my_specialization[] = $cat_info[$element]['name'];
+				if( $config['allow_alt_url'] ) $my_specialization_link[] = "<a href=\"" . $config['http_home_url'] . get_url( $element ) . "/\">{$cat_info[$element]['name']}</a>";
+				else $my_specialization_link[] = "<a href=\"$PHP_SELF?do=cat&amp;category={$cat_info[$element]['alt_name']}\">{$cat_info[$element]['name']}</a>";
+			}
+		}
+				
+		$my_specialization_link = implode( " {$config['category_separator']} ", $my_specialization_link );
+	}
+			
+	$my_specialization = implode( " {$config['category_separator']} ", $my_specialization );
+}
+
+$tpl->set( '{specialization}', $my_specialization );
+$tpl->set( '{specialization-link}', $my_specialization_link );]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
