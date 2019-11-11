@@ -20,6 +20,7 @@
  9.  [Check exists tags](https://github.com/TeraMoune/Different-hacks-DLE#check-exists-tagsxml)
  10. [Comments functions](https://github.com/TeraMoune/Different-hacks-DLE#comments-functionsxml)
  11. [Aviable date](https://github.com/TeraMoune/Different-hacks-DLE#aviable-datexml)
+ 12. [Specialization from the category](https://github.com/TeraMoune/Different-hacks-DLE#specialization-from-the-categoryxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -122,6 +123,17 @@ else params[value.name] = value.value;
 [aviable_date="01.09.2019|yesterday|tomorrow"] text [/aviable_date] 
 
 Выводит заключённый между блоками содержимое если указанная дата ровна дате публикации новости. Можно указать tomorrow или yesterday (Завтра и Вчера) tomorrow выведет текст если новость опубликована днём ранее, а yesterday обратный параметр и выведет если новость опубликуют завтра.
+
+#### specialization-from-the-category.xml
+---
+  - Шаблон применения: **userinfo.tpl**.
+ 
+{specialization}        - Просто тект категории.
+{specialization-link}   - В качестве ссылки на категорию.
+{specialization-select} - Селект выборки категории в настройках профиля.
+
+Даёт возможность использовать категории сайта в качестве выборки определённых для конкретного пользователя и вывести выбранные в профиле.
+
 
 ### Donate
 Для материальной благодарности.
