@@ -23,6 +23,7 @@
  12. [Specialization from the category](https://github.com/TeraMoune/Different-hacks-DLE#specialization-from-the-categoryxml)
  13. [Validity period publications for groups](https://github.com/TeraMoune/Different-hacks-DLE#Validity-period-publications-for-groupsxml)
  14. [Approve files in xfields](https://github.com/TeraMoune/Different-hacks-DLE#approve-files-in-xfieldsxml)
+ 15. [Mod search plugins](https://github.com/TeraMoune/Different-hacks-DLE#mod-search-pluginsxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -153,6 +154,10 @@ else params[value.name] = value.value;
 В шаблоне доступны доп. теги.
 `[file-not-approve]<span class="attachment">Файл еще не проверен</span>[/file-not-approve]`
 
+#### mod-search-plugins.xml
+---
+
+Добавляет поле поиска в раздел плагинов для удобства поиска плагина или редактируемого файла.
 
 ### Donate
 Для материальной благодарности.
