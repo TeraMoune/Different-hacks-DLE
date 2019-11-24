@@ -21,6 +21,7 @@
  10. [Comments functions](https://github.com/TeraMoune/Different-hacks-DLE#comments-functionsxml)
  11. [Aviable date](https://github.com/TeraMoune/Different-hacks-DLE#aviable-datexml)
  12. [Specialization from the category](https://github.com/TeraMoune/Different-hacks-DLE#specialization-from-the-categoryxml)
+ 13. [Validity period publications for groups](https://github.com/TeraMoune/Different-hacks-DLE#Validity-period-publications-for-groups.xml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -135,6 +136,11 @@ else params[value.name] = value.value;
 {specialization-select} - Селект выборки категории в настройках профиля.
 
 Даёт возможность использовать категории сайта в качестве выборки определённых для конкретного пользователя и вывести выбранные в профиле.
+
+#### Validity-period-publications-for-groups.xml
+---
+
+Добавляет группам функцию 'Срок действия до' с рядом действий по наступлению даты. Можно выбрать автоматическое применение определённого действия при добавлении новостей учасником группы. В случае если новость сперва находится на модерации то правило применяется в момент изменения статуса новости.
 
 
 ### Donate
