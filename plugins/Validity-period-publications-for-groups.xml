@@ -26,7 +26,7 @@
         <td><input type="text" class="form-control" style="max-width:100px; text-align: center;" name="max_edit_days" value="{$max_edit_days_value}"></td>
     </tr>]]></searchcode>
 			<replacecode><![CDATA[    <tr>
-        <td><h6 class="media-heading text-semibold">Срок действия публикации</h6><span class="text-muted text-size-small hidden-xs">Указать в днях, 0 не применять дуйствие к публикациям группы</span></td>
+        <td><h6 class="media-heading text-semibold">Срок действия публикации</h6><span class="text-muted text-size-small hidden-xs">Указать в днях, 0 не применять действие к публикациям группы</span></td>
         <td><input type="text" class="form-control" style="max-width:100px; text-align: center;" name="expires_addnews" value="{$expires_addnews}"></td>
     </tr>
     <tr>
