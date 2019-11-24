@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Approve files in xfields</name>
+	<description>Заглушка на проверку файла, при загрузке файла скачать его не выйдет пока не будет изменён статус проверки файла.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[ALTER TABLE `{prefix}_files` ADD `approve` tinyint(1) NOT NULL Default '0';]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{prefix}_files` DROP `approve`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/inc/xfields.php">
+		<operation action="after">
+			<searchcode><![CDATA[$xfieldinput = array();]]></searchcode>
+			<replacecode><![CDATA[if ($xfieldmode != "site") {
+
+	$files_moderation = $db->super_query("SELECT id, approve FROM " . PREFIX . "_files WHERE news_id = '{$id}'", true);
+	$files_m = array();
+	foreach( $files_moderation as $val) {
+		
+		$files_m[$val['id']] = $val['approve'];
+		
+	}
+
+}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$fileid = "&nbsp;<button class=\"qq-upload-button btn btn-sm btn-red bg-danger btn-raised\" onclick=\"xffiledelete('".$fieldname."','".$fileid."');return false;\">{$lang['xfield_xfid']}</button>";]]></searchcode>
+			<replacecode><![CDATA[$selected_approve = $files_m[$fileid] ? "checked" : "";
+$fileid = "&nbsp;<button class=\"qq-upload-button btn btn-sm btn-red bg-danger btn-raised\" onclick=\"xffiledelete('".$fieldname."','".$fileid."');return false;\">{$lang['xfield_xfid']}</button><input id=\"approve_{$fileid}\" class=\"switch\" type=\"checkbox\" data-id=\"{$fileid}\" name=\"approve_{$fileid}\" onchange=\"approve_files(this);\" value=\"1\" {$selected_approve}>";]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[		} else { $show="display:none;"; $fileid="";}
+		
+$uploadscript = <<<HTML]]></searchcode>
+			<replacecode><![CDATA[		} else { $show="display:none;"; $fileid="";}
+		
+$fn = <<<HTML
+function approve_files(t) {
+    
+	$.get("engine/ajax/controller.php?mod=adminfunction&action=approve_files&user_hash="+dle_login_hash, { id: $(t).data('id'), approve: ($(t).is(':checked') ? 'true' : 'false') } , function( data ){
+		if(data == 'error') DLEalert ( 'Ошибка', 'Сохранение параметра' );
+        else if(data == 'not-owner') DLEalert ( 'Ошибка', 'Ошибка доступа' );
+    });    
+    
+	return false;
+}
+HTML;
+
+$uploadscript = <<<HTML]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[jQuery(function($){
+{$uploadscript}
+});]]></searchcode>
+			<replacecode><![CDATA[{$fn}
+jQuery(function($){
+{$uploadscript}
+});]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/ajax/adminfunction.php">
+		<operation action="before">
+			<searchcode><![CDATA[if ($_REQUEST['action'] == "bannersviews") {]]></searchcode>
+			<replacecode><![CDATA[if ($_REQUEST['action'] == "approve_files") {
+  
+  	if( $_REQUEST['user_hash'] == "" OR $_REQUEST['user_hash'] != $dle_login_hash ) {
+		
+		die ("error");
+	
+	}
+  
+	$id = intval($_REQUEST['id']);
+  	$approve = trim($_REQUEST['approve']);
+	
+	if($id < 1 ) die ("error");
+	
+	$row = $db->super_query( "SELECT id FROM " . PREFIX . "_files WHERE id='{$id}'" );
+  
+  	if( $row ) {
+      
+      if( $member_id['user_group'] == 1 OR $row['author'] == $member_id['name'] ) {
+ 
+        if( $approve == 'true' ) $approve = 1;
+        else $approve = 0;
+        $db->query( "UPDATE " . PREFIX . "_files SET approve='{$approve}' WHERE id='{$row['id']}'" );
+
+        die('ok');        
+        
+      } else die('not-owner');  
+      
+    }
+  
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/functions.php">
+		<operation action="before">
+			<searchcode><![CDATA[if (stripos ( $tpl->copy_template, "{md5}" ) !== false) {]]></searchcode>
+			<replacecode><![CDATA[if ( !$row['approve'] ) {
+			
+	$tpl->set( '[file-not-approve]', "" );
+	$tpl->set( '[/file-not-approve]', "" );
+	$tpl->set_block( "'\\[not-allow-download\\](.*?)\\[/not-allow-download\\]'si", "" );
+  	$tpl->set_block( "'\\[allow-download\\](.*?)\\[/allow-download\\]'si", "" );
+					
+} else {
+  
+ 	 $tpl->set_block( "'\\[file-not-approve\\](.*?)\\[/file-not-approve\\]'si", "" );]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[$tpl->compile( 'attachment' );]]></searchcode>
+			<replacecode><![CDATA[}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/download.php">
+		<operation action="replace">
+			<searchcode><![CDATA[news_id, name, onserver]]></searchcode>
+			<replacecode><![CDATA[news_id, name, onserver, approve]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[if ( !$perm ) {
+	header( "HTTP/1.1 403 Forbidden" );
+	die ( "You don't have access to download this file" );
+}]]></searchcode>
+			<replacecode><![CDATA[if ( !$perm OR !$row['approve'] ) {
+	header( "HTTP/1.1 403 Forbidden" );
+	die ( "You don't have access to download this file" );
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/classes/uploads/upload.class.php">
+		<operation action="before">
+			<searchcode><![CDATA[$xfvalue = "[attachment={$id}:{$filename}]";]]></searchcode>
+			<replacecode><![CDATA[$return_box .= "<input id=\"approve_{$id}\" class=\"switch\" type=\"checkbox\" data-id=\"{$id}\" name=\"approve_{$id}\" onchange=\"approve_files(this);\" value=\"1\">";]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
