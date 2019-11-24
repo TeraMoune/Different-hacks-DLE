@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Mod search plugins</name>
+	<description>Добавляет поле поиска в раздел плагинов для поисков плагина и редактируемого файла.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<file name="engine/inc/plugins.php">
+		<operation action="replace">
+			<searchcode><![CDATA[{$lang['plugins_list']}]]></searchcode>
+			<replacecode><![CDATA[{$lang['plugins_list']}
+<div class="heading-elements">
+	<div class="form-group has-feedback" style="width:250px;">
+		<input id="filterPlugins" name="searchword" type="search" class="form-control" placeholder="{$lang['search_field']}" value="">
+	</div>
+</div>]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[<ul class="icons-list">]]></searchcode>
+			<replacecode><![CDATA[<div class="form-group has-feedback" style="width:250px;float:left">
+	<input id="filterPlugins" name="searchword" type="search" class="form-control" placeholder="{$lang['search_field']}" value="">
+</div>]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[<div id="container">{$x}</div>]]></searchcode>
+			<replacecode><![CDATA[<div id="container">{$x}<span class="no-results" style="display:none;">Ничего не нашлось</span></div>]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[{$row['name']}{$row['version']}]]></searchcode>
+			<replacecode><![CDATA[<span class=\"filtered_text\">{$row['name']}</span>{$row['version']}]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[<div class="panel panel-default">]]></searchcode>
+			<replacecode><![CDATA[<style>
+.filtered {
+    display: none !important;
+}
+
+.no-results {
+    text-align: center;
+    display: block;
+    padding: 20px;  
+}
+</style>]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[function confirmdelete(id){]]></searchcode>
+			<replacecode><![CDATA[function filterPlugins(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	if ( e.keyCode == 13 )
+		return;
+
+	var target = $(e.srcElement || e.currentTarget),
+		filterVal = target.val().toLowerCase(),
+		filterTable = target.parents('.panel').find('.table tbody');				
+			
+	if ( e.keyCode == 27 )
+		target.val('');
+
+	if ( target.val().length < 1 ) {
+			
+		filterTable.children('tr').removeClass('filtered');
+		filterTable.children('tr').removeClass('show');
+			
+	} else {
+			
+		filterTable.children('tr').each(
+			function() {
+			 	$(this)[($(this).find('.filtered_text').text().toLowerCase().indexOf(filterVal) > -1) ? "removeClass" : "addClass"]('filtered');
+			 	$(this)[($(this).find('.filtered_text').text().toLowerCase().indexOf(filterVal) > -1) ? "addClass" : "removeClass"]('show');
+			}
+		);
+			
+	}
+
+	var scroll = target.parents('.panel').find('.table tbody');
+
+    if (scroll.length > 0){}
+		
+}
+
+var filterPlugins_input = $('#filterPlugins');
+if (filterPlugins_input.length > 0) {
+	filterPlugins_input.keyup(filterPlugins).keydown(function(e) {
+	if (e.which == 13) {
+		e.stopPropagation();
+		e.preventDefault();
+	}
+	});
+}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$(function(){
+
+	$(".sql_editor").each(function() {]]></searchcode>
+			<replacecode><![CDATA[function filterPlugins(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	if ( e.keyCode == 13 )
+		return;
+
+	var target = $(e.srcElement || e.currentTarget),
+		filterVal = target.val().toLowerCase(),
+		filterTable = target.parents('.panel').find('#tabfiles #container');
+			
+	if ( e.keyCode == 27 )
+		target.val('');
+
+	if ( target.val().length < 1 ) {
+			
+		filterTable.children('.well').removeClass('filtered');
+		filterTable.children('.well').removeClass('show');
+		filterTable.children('.no-results').hide();
+			
+	} else {
+			
+		filterTable.children('.well').each(
+			function() {
+			 	$(this)[($(this).find('input').val().toLowerCase().indexOf(filterVal) > -1) ? "removeClass" : "addClass"]('filtered');
+			 	$(this)[($(this).find('input').val().toLowerCase().indexOf(filterVal) > -1) ? "addClass" : "removeClass"]('show');
+			}
+		);
+
+		var allHidden = filterTable.children('.well.filtered').length >= filterTable.children('.well').length;
+		filterTable.children('.no-results')[(allHidden) ? "show" : "hide"]();
+			
+	}
+
+	var scroll = target.parents('.panel').find('#tabfiles');
+
+    if (scroll.length > 0){}
+		
+}
+
+$(function(){
+  
+    var filterPlugins_input = $('#filterPlugins');
+    if (filterPlugins_input.length > 0) {
+        filterPlugins_input.keyup(filterPlugins).keydown(function(e) {
+        if (e.which == 13) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        });
+    }  
+
+	$(".sql_editor").each(function() {]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
