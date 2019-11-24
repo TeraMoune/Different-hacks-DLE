@@ -22,6 +22,7 @@
  11. [Aviable date](https://github.com/TeraMoune/Different-hacks-DLE#aviable-datexml)
  12. [Specialization from the category](https://github.com/TeraMoune/Different-hacks-DLE#specialization-from-the-categoryxml)
  13. [Validity period publications for groups](https://github.com/TeraMoune/Different-hacks-DLE#Validity-period-publications-for-groupsxml)
+ 14. [Approve files in xfields](https://github.com/TeraMoune/Different-hacks-DLE#approve-files-in-xfieldsxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -143,6 +144,14 @@ else params[value.name] = value.value;
 Добавляет группам функцию 'Срок действия публикации' с рядом действий по наступлению даты. Можно выбрать автоматическое применение определённого действия при добавлении новостей участником группы. В случае если новость предварительно находится на одобрении то правило применяется в момент изменения статуса новости.
 
 В настройках группы в разделе новости две настройки, одна в одной указывается в днях сколько должно пройти с момента публикации. В другой действие которое должно произойти.
+
+#### approve-files-in-xfields.xml
+---
+
+Добавляет checkbox для файлов загруженных в доп. поле. Переключатель approve параметра который так же определяет возможность скачивания файла с сервера.
+
+В шаблоне доступны доп. теги.
+`[file-not-approve]<span class="attachment">Файл еще не проверен</span>[/file-not-approve]`
 
 
 ### Donate
