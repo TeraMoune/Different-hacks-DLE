@@ -21,7 +21,7 @@
  10. [Comments functions](https://github.com/TeraMoune/Different-hacks-DLE#comments-functionsxml)
  11. [Aviable date](https://github.com/TeraMoune/Different-hacks-DLE#aviable-datexml)
  12. [Specialization from the category](https://github.com/TeraMoune/Different-hacks-DLE#specialization-from-the-categoryxml)
- 13. [Validity period publications for groups](https://github.com/TeraMoune/Different-hacks-DLE#Validity-period-publications-for-groups.xml)
+ 13. [Validity period publications for groups](https://github.com/TeraMoune/Different-hacks-DLE#Validity-period-publications-for-groupsxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
