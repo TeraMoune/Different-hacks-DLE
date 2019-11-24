@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Срок действия публикации для групп</name>
-	<description>Добавляет группам функцию (Срок действия до) с рядом действий по наступлению даты.</description>
+	<description>Добавляет группам функцию (Срок действия публикации) с рядом действий по наступлению даты.</description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
