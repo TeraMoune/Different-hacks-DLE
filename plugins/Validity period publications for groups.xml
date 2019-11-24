@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Срок действия публикации для групп</name>
+	<description>Добавляет группам функцию &#039;Срок действия до&#039; с рядом действий по наступлению даты.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[ALTER TABLE `{userprefix}_usergroups` ADD `expires_addnews` tinyint(2) NOT NULL Default '0', ADD `expires_action` tinyint(1) NOT NULL Default '0', ADD `move_cat` varchar(190) NOT NULL Default '0';]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{userprefix}_usergroups` DROP `expires_addnews`, `expires_action`, `move_cat`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/inc/usergroup.php">
+		<operation action="after">
+			<searchcode><![CDATA[    <tr>
+        <td><h6 class="media-heading text-semibold">{$lang['group_edit_days']}</h6><span class="text-muted text-size-small hidden-xs">{$lang['hint_edit_days']}</span></td>
+        <td><input type="text" class="form-control" style="max-width:100px; text-align: center;" name="max_edit_days" value="{$max_edit_days_value}"></td>
+    </tr>]]></searchcode>
+			<replacecode><![CDATA[    <tr>
+        <td><h6 class="media-heading text-semibold">Срок действия публикации</h6><span class="text-muted text-size-small hidden-xs">Указать в днях, 0 не применять дуйствие к публикациям группы</span></td>
+        <td><input type="text" class="form-control" style="max-width:100px; text-align: center;" name="expires_addnews" value="{$expires_addnews}"></td>
+    </tr>
+    <tr>
+        <td><h6 class="media-heading text-semibold">Действие</h6></td>
+        <td>{$expires_action}</td>
+    </tr>
+    <tr id="movecatlist"{$movecat_style}>
+        <td><h6 class="media-heading text-semibold">Перенести в категории</h6></td>
+        <td>
+      	<select data-placeholder="Выберите категорию ..." title="Выберите категорию ..." name="movecat[]" class="categoryselect" multiple="" style="width: 100%; max-width: 350px; display: none;">	
+      	{$move_cat_list}
+      	</select>
+      	</td>
+    </tr>        ]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$media_comments = intval($_REQUEST['media_comments']);]]></searchcode>
+			<replacecode><![CDATA[$expires_addnews = intval($_REQUEST['expires_addnews']);
+$expires_action = intval($_REQUEST['expires_action']);
+$expires_movecat = $_REQUEST['movecat'];
+	
+if( !is_array($expires_movecat) ) $expires_movecat = array ();
+
+if( !count($expires_movecat) ) $expires_movecat[] = '0';
+
+$expires_movecat_list = array();
+
+foreach ( $expires_movecat as $value ) {
+	$expires_movecat_list[] = intval($value);
+}
+				
+$expires_movecat_list = $db->safesql( implode( ',', $expires_movecat_list ) );]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[video_comments, media_comments]]></searchcode>
+			<replacecode><![CDATA[video_comments, media_comments, expires_addnews, expires_action, move_cat]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA['$video_comments', '$media_comments']]></searchcode>
+			<replacecode><![CDATA['$video_comments', '$media_comments', '$expires_addnews', '$expires_action', '$expires_movecat_list']]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[media_comments='$media_comments']]></searchcode>
+			<replacecode><![CDATA[media_comments='$media_comments', expires_addnews='$expires_addnews', expires_action='$expires_action', move_cat='$expires_movecat_list']]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$max_pm_value = $user_group[$id]['max_pm'];]]></searchcode>
+			<replacecode><![CDATA[$expires_addnews = $user_group[$id]['expires_addnews'];
+$expires_action = makeDropDown( array ("0" => "Выберите действие", "1" => "Удалить", "2" => "Отправить на модерацию", "3" => "Снять публикацию на главной", "4" => "Снять фиксацию", "5" => "Переместить в другую категорию"), "expires_action", "{$user_group[$id]['expires_action']}", "onchange=\"moveCategoryChange(this)\"" );
+$move_cat_list = CategoryNewsSelection( explode( ',', $user_group[$id]['move_cat'] ), 0 );
+if( $user_group[$id]['expires_action'] != 5 ) $movecat_style = ' style="display:none"';
+else $movecat_style = '';]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[function clear_html( $txt ) {]]></searchcode>
+			<replacecode><![CDATA[function makeDropDown($options, $name, $selected, $onchange) {
+  
+  	if( $onchange ) $onchange .= " " . $onchange;
+  
+	$output = "<select class=\"uniform\" name=\"$name\"$onchange>\r\n";
+	foreach ( $options as $value => $description ) {
+		$output .= "<option value=\"$value\"";
+		if( $selected == $value ) {
+			$output .= " selected ";
+		}
+		$output .= ">$description</option>\n";
+	}
+	$output .= "</select>";
+	return $output;
+}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$(function(){
+	$('[data-toggle="tab"]').on('shown.bs.tab', function(e) {]]></searchcode>
+			<replacecode><![CDATA[function moveCategoryChange(obj) {
+  
+  var value = $(obj).val();
+
+  if (value == 5) $('#movecatlist').show();
+  else $('#movecatlist').hide();
+	  
+}
+
+$(function(){
+	$('[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+      
+    $('[name="movecat[]"]').chosen({allow_single_deselect:true, no_results_text: '{$lang['addnews_cat_fault']}'});]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/addnews.php">
+		<operation action="before">
+			<searchcode><![CDATA[if( $_POST['tags'] != "" AND $approve ) {]]></searchcode>
+			<replacecode><![CDATA[if( $approve AND $user_group[$member_id['user_group']]['expires_addnews'] AND $user_group[$member_id['user_group']]['expires_action']) {
+	
+    $expires_date = date('Y-m-d', time());
+    $expires_date = date('Y-m-d', strtotime($expires_date. " + {$user_group[$member_id['user_group']]['expires_addnews']} days"));
+    $expires_date = strtotime($expires_date);  
+  
+	$db->query( "INSERT INTO " . PREFIX . "_post_log (news_id, expires, action, move_cat) VALUES('{$row['id']}', '{$expires_date}', '{$user_group[$member_id['user_group']]['expires_action']}', '{$user_group[$member_id['user_group']]['move_cat']}')" );
+
+}]]></replacecode>
+			<searchcount>1</searchcount>
+			<replacecount>2</replacecount>
+		</operation>
+	</file>
+	<file name="engine/inc/massactions.php">
+		<operation action="before">
+			<searchcode><![CDATA[$db->query( "DELETE FROM " . PREFIX . "_tags WHERE news_id = '{$id}'" );]]></searchcode>
+			<replacecode><![CDATA[$row = $db->super_query( "SELECT p.id, p.autor, e.user_group FROM " . PREFIX . "_post p LEFT JOIN " . PREFIX . "_users e ON (p.autor=e.name) WHERE id = '{$id}'" );
+			
+if( $user_group[$row['user_group']]['expires_addnews'] AND $user_group[$row['user_group']]['expires_action']) {
+  
+    $expires_date = date('Y-m-d', time());
+    $expires_date = date('Y-m-d', strtotime($expires_date. " + {$user_group[$row['user_group']]['expires_addnews']} days"));
+    $expires_date = strtotime($expires_date);
+  
+	$db->query( "INSERT INTO " . PREFIX . "_post_log (news_id, expires, action, move_cat) VALUES('{$id}', '{$expires_date}', '{$user_group[$row['user_group']]['expires_action']}', '{$user_group[$row['user_group']]['move_cat']}')" );
+
+}]]></replacecode>
+			<searchcount>1</searchcount>
+			<replacecount>1</replacecount>
+		</operation>
+	</file>
+</dleplugin>
