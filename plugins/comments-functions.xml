@@ -59,25 +59,20 @@
 if( !$find_rated ) {
   
   $crating = intval($_POST['crating']);
-  $go_rate = true;
+
   if ( !$config['rating_type'] ) {
-      if( $go_rate > 5 or $go_rate < 1 ) $go_rate = false;
+      if( $crating > 5 or $crating < 1 ) $crating = false;
   }
 
   if ( $config['rating_type'] == "1" ) {
-      $go_rate = 1;
+      $crating = 1;
   }
 
   if ( $config['rating_type'] == "2" OR $config['rating_type'] == "3") {
-      if( $go_rate != 1 AND $go_rate != -1 ) $go_rate = false;
+      if( $crating != 1 AND $crating != -1 ) $crating = false;
   }  
   
-} else { 
-  
-  $go_rate = false; 
-  $crating = 0; 
-  
-}
+} else $crating = false; 
 
 $offtop = intval($_POST['offtop']);]]></replacecode>
 		</operation>
@@ -93,7 +88,7 @@ else $db->query( "INSERT INTO " . PREFIX . "_comments (post_id, media_id, date, 
 		</operation>
 		<operation action="after">
 			<searchcode><![CDATA[$added_comments_id = $db->insert_id();]]></searchcode>
-			<replacecode><![CDATA[if( $go_rate ) {
+			<replacecode><![CDATA[if( $crating ) {
 
 $member_id['name'] = $db->safesql($member_id['name']);
 
