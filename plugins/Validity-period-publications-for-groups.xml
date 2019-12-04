@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Срок действия публикации для групп</name>
-	<description>Добавляет группам функцию 'Срок действия до' с рядом действий по наступлению даты.</description>
+	<description>Добавляет группам функцию &#039;Срок действия до&#039; с рядом действий по наступлению даты.</description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
@@ -13,7 +13,7 @@
 	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
 	<mysqlenable><![CDATA[]]></mysqlenable>
 	<mysqldisable><![CDATA[]]></mysqldisable>
-	<mysqldelete><![CDATA[ALTER TABLE `{userprefix}_usergroups` DROP `expires_addnews`, `expires_action`, `move_cat`, `ignore_expires_cat`;]]></mysqldelete>
+	<mysqldelete><![CDATA[ALTER TABLE `{userprefix}_usergroups` DROP `expires_addnews`, DROP `expires_action`, DROP `move_cat`, DROP `ignore_expires_cat`;]]></mysqldelete>
 	<phpinstall><![CDATA[]]></phpinstall>
 	<phpupgrade><![CDATA[]]></phpupgrade>
 	<phpenable><![CDATA[]]></phpenable>
