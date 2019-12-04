@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Срок действия публикации для групп</name>
-	<description>Добавляет группам функцию (Срок действия публикации) с рядом действий по наступлению даты.</description>
+	<description>Добавляет группам функцию &#039;Срок действия до&#039; с рядом действий по наступлению даты.</description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
@@ -9,11 +9,11 @@
 	<upgradeurl></upgradeurl>
 	<filedelete>0</filedelete>
 	<needplugin></needplugin>
-	<mysqlinstall><![CDATA[ALTER TABLE `{userprefix}_usergroups` ADD `expires_addnews` tinyint(2) NOT NULL Default '0', ADD `expires_action` tinyint(1) NOT NULL Default '0', ADD `move_cat` varchar(190) NOT NULL Default '0';]]></mysqlinstall>
+	<mysqlinstall><![CDATA[ALTER TABLE `{userprefix}_usergroups` ADD `expires_addnews` tinyint(2) NOT NULL Default '0', ADD `expires_action` tinyint(1) NOT NULL Default '0', ADD `move_cat` varchar(190) NOT NULL Default '0', ADD `ignore_expires_cat` varchar(190) NOT NULL Default '';]]></mysqlinstall>
 	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
 	<mysqlenable><![CDATA[]]></mysqlenable>
 	<mysqldisable><![CDATA[]]></mysqldisable>
-	<mysqldelete><![CDATA[ALTER TABLE `{userprefix}_usergroups` DROP `expires_addnews`, `expires_action`, `move_cat`;]]></mysqldelete>
+	<mysqldelete><![CDATA[ALTER TABLE `{userprefix}_usergroups` DROP `expires_addnews`, `expires_action`, `move_cat`, `ignore_expires_cat`;]]></mysqldelete>
 	<phpinstall><![CDATA[]]></phpinstall>
 	<phpupgrade><![CDATA[]]></phpupgrade>
 	<phpenable><![CDATA[]]></phpenable>
@@ -26,7 +26,7 @@
         <td><input type="text" class="form-control" style="max-width:100px; text-align: center;" name="max_edit_days" value="{$max_edit_days_value}"></td>
     </tr>]]></searchcode>
 			<replacecode><![CDATA[    <tr>
-        <td><h6 class="media-heading text-semibold">Срок действия публикации</h6><span class="text-muted text-size-small hidden-xs">Указать в днях, 0 не применять действие к публикациям группы</span></td>
+        <td><h6 class="media-heading text-semibold">Срок действия публикации</h6><span class="text-muted text-size-small hidden-xs">Указать в днях, 0 не применять дуйствие к публикациям группы</span></td>
         <td><input type="text" class="form-control" style="max-width:100px; text-align: center;" name="expires_addnews" value="{$expires_addnews}"></td>
     </tr>
     <tr>
@@ -40,13 +40,22 @@
       	{$move_cat_list}
       	</select>
       	</td>
-    </tr>        ]]></replacecode>
+    </tr>
+    <tr id="ignore_expires_catlist">
+        <td><h6 class="media-heading text-semibold">Игнорируемые категории</h6><span class="text-muted text-size-small hidden-xs">Не применяет правило для новостей опубликованных в указанные категории</span></td>
+        <td>
+      	<select data-placeholder="Выберите категорию ..." title="Выберите категорию ..." name="ignore_expirescat[]" class="categoryselect" multiple="" style="width: 100%; max-width: 350px; display: none;">	
+      	{$ignore_expires_list}
+      	</select>
+      	</td>
+    </tr>          ]]></replacecode>
 		</operation>
 		<operation action="after">
 			<searchcode><![CDATA[$media_comments = intval($_REQUEST['media_comments']);]]></searchcode>
 			<replacecode><![CDATA[$expires_addnews = intval($_REQUEST['expires_addnews']);
 $expires_action = intval($_REQUEST['expires_action']);
 $expires_movecat = $_REQUEST['movecat'];
+$ignore_expires_movecat = $_REQUEST['ignore_expirescat'];
 	
 if( !is_array($expires_movecat) ) $expires_movecat = array ();
 
@@ -58,25 +67,38 @@ foreach ( $expires_movecat as $value ) {
 	$expires_movecat_list[] = intval($value);
 }
 				
-$expires_movecat_list = $db->safesql( implode( ',', $expires_movecat_list ) );]]></replacecode>
+$expires_movecat_list = $db->safesql( implode( ',', $expires_movecat_list ) );
+
+if( !is_array($ignore_expires_movecat) ) $ignore_expires_movecat = array ();
+
+if( !count($ignore_expires_movecat) ) $ignore_expires_movecat[] = '0';
+
+$ignore_expires_movecat_list = array();
+
+foreach ( $ignore_expires_movecat as $value ) {
+	$ignore_expires_movecat_list[] = intval($value);
+}
+				
+$ignore_expires_movecat_list = $db->safesql( implode( ',', $ignore_expires_movecat_list ) );]]></replacecode>
 		</operation>
 		<operation action="replace">
 			<searchcode><![CDATA[video_comments, media_comments]]></searchcode>
-			<replacecode><![CDATA[video_comments, media_comments, expires_addnews, expires_action, move_cat]]></replacecode>
+			<replacecode><![CDATA[video_comments, media_comments, expires_addnews, expires_action, move_cat, ignore_expires_cat]]></replacecode>
 		</operation>
 		<operation action="replace">
 			<searchcode><![CDATA['$video_comments', '$media_comments']]></searchcode>
-			<replacecode><![CDATA['$video_comments', '$media_comments', '$expires_addnews', '$expires_action', '$expires_movecat_list']]></replacecode>
+			<replacecode><![CDATA['$video_comments', '$media_comments', '$expires_addnews', '$expires_action', '$expires_movecat_list', '$ignore_expires_movecat_list']]></replacecode>
 		</operation>
 		<operation action="replace">
 			<searchcode><![CDATA[media_comments='$media_comments']]></searchcode>
-			<replacecode><![CDATA[media_comments='$media_comments', expires_addnews='$expires_addnews', expires_action='$expires_action', move_cat='$expires_movecat_list']]></replacecode>
+			<replacecode><![CDATA[media_comments='$media_comments', expires_addnews='$expires_addnews', expires_action='$expires_action', move_cat='$expires_movecat_list', ignore_expires_cat='$ignore_expires_movecat_list']]></replacecode>
 		</operation>
 		<operation action="after">
 			<searchcode><![CDATA[$max_pm_value = $user_group[$id]['max_pm'];]]></searchcode>
 			<replacecode><![CDATA[$expires_addnews = $user_group[$id]['expires_addnews'];
 $expires_action = makeDropDown( array ("0" => "Выберите действие", "1" => "Удалить", "2" => "Отправить на модерацию", "3" => "Снять публикацию на главной", "4" => "Снять фиксацию", "5" => "Переместить в другую категорию"), "expires_action", "{$user_group[$id]['expires_action']}", "onchange=\"moveCategoryChange(this)\"" );
 $move_cat_list = CategoryNewsSelection( explode( ',', $user_group[$id]['move_cat'] ), 0 );
+$ignore_expires_list = CategoryNewsSelection( explode( ',', $user_group[$id]['ignore_expires_cat'] ), 0 );
 if( $user_group[$id]['expires_action'] != 5 ) $movecat_style = ' style="display:none"';
 else $movecat_style = '';]]></replacecode>
 		</operation>
@@ -112,21 +134,27 @@ else $movecat_style = '';]]></replacecode>
 
 $(function(){
 	$('[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-      
-    $('[name="movecat[]"]').chosen({allow_single_deselect:true, no_results_text: '{$lang['addnews_cat_fault']}'});]]></replacecode>
+     setTimeout(function(){
+		$('[name="movecat[]"], [name="ignore_expirescat[]"]').chosen({allow_single_deselect:true, no_results_text: '{$lang['addnews_cat_fault']}'});
+     }, 100);]]></replacecode>
 		</operation>
 	</file>
 	<file name="engine/modules/addnews.php">
 		<operation action="before">
 			<searchcode><![CDATA[if( $_POST['tags'] != "" AND $approve ) {]]></searchcode>
-			<replacecode><![CDATA[if( $approve AND $user_group[$member_id['user_group']]['expires_addnews'] AND $user_group[$member_id['user_group']]['expires_action']) {
-	
-    $expires_date = date('Y-m-d', time());
-    $expires_date = date('Y-m-d', strtotime($expires_date. " + {$user_group[$member_id['user_group']]['expires_addnews']} days"));
-    $expires_date = strtotime($expires_date);  
+			<replacecode><![CDATA[$ignore_expires_cat = explode(',', $user_group[$member_id['user_group']]['ignore_expires_cat']);
+if( !array_intersect($catlist, $ignore_expires_cat) ) {
   
-	$db->query( "INSERT INTO " . PREFIX . "_post_log (news_id, expires, action, move_cat) VALUES('{$row['id']}', '{$expires_date}', '{$user_group[$member_id['user_group']]['expires_action']}', '{$user_group[$member_id['user_group']]['move_cat']}')" );
+  if( $approve AND $user_group[$member_id['user_group']]['expires_addnews'] AND $user_group[$member_id['user_group']]['expires_action']) {
 
+      $expires_date = date('Y-m-d', time());
+      $expires_date = date('Y-m-d', strtotime($expires_date. " + {$user_group[$member_id['user_group']]['expires_addnews']} days"));
+      $expires_date = strtotime($expires_date);  
+
+      $db->query( "INSERT INTO " . PREFIX . "_post_log (news_id, expires, action, move_cat) VALUES('{$row['id']}', '{$expires_date}', '{$user_group[$member_id['user_group']]['expires_action']}', '{$user_group[$member_id['user_group']]['move_cat']}')" );
+
+  }
+  
 }]]></replacecode>
 			<searchcount>1</searchcount>
 			<replacecount>2</replacecount>
