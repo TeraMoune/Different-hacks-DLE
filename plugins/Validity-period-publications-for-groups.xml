@@ -69,17 +69,17 @@ foreach ( $expires_movecat as $value ) {
 				
 $expires_movecat_list = $db->safesql( implode( ',', $expires_movecat_list ) );
 
-if( !is_array($ignore_expires_movecat) ) $ignore_expires_movecat = array ();
+if( is_array($ignore_expires_movecat) ) {
+  
+  $ignore_expires_movecat_list = array();
 
-if( !count($ignore_expires_movecat) ) $ignore_expires_movecat[] = '0';
+  foreach ( $ignore_expires_movecat as $value ) {
+      $ignore_expires_movecat_list[] = intval($value);
+  }
 
-$ignore_expires_movecat_list = array();
-
-foreach ( $ignore_expires_movecat as $value ) {
-	$ignore_expires_movecat_list[] = intval($value);
-}
-				
-$ignore_expires_movecat_list = $db->safesql( implode( ',', $ignore_expires_movecat_list ) );]]></replacecode>
+  $ignore_expires_movecat_list = $db->safesql( implode( ',', $ignore_expires_movecat_list ) );  
+  
+} else $ignore_expires_movecat_list = "";]]></replacecode>
 		</operation>
 		<operation action="replace">
 			<searchcode><![CDATA[video_comments, media_comments]]></searchcode>
@@ -143,7 +143,7 @@ $(function(){
 		<operation action="before">
 			<searchcode><![CDATA[if( $_POST['tags'] != "" AND $approve ) {]]></searchcode>
 			<replacecode><![CDATA[$ignore_expires_cat = explode(',', $user_group[$member_id['user_group']]['ignore_expires_cat']);
-if( !array_intersect($catlist, $ignore_expires_cat) ) {
+if( count($ignore_expires_cat) AND !array_intersect($catlist, $ignore_expires_cat) ) {
   
   if( $approve AND $user_group[$member_id['user_group']]['expires_addnews'] AND $user_group[$member_id['user_group']]['expires_action']) {
 
