@@ -14,19 +14,10 @@
 	<mysqldisable><![CDATA[]]></mysqldisable>
 	<mysqldelete><![CDATA[]]></mysqldelete>
 	<file name="engine/inc/plugins.php">
-		<operation action="replace">
-			<searchcode><![CDATA[{$lang['plugins_list']}]]></searchcode>
-			<replacecode><![CDATA[{$lang['plugins_list']}
-<div class="heading-elements">
-	<div class="form-group has-feedback" style="width:250px;">
-		<input id="filterPlugins" name="searchword" type="search" class="form-control" placeholder="{$lang['search_field']}" value="">
-	</div>
-</div>]]></replacecode>
-		</operation>
 		<operation action="before">
-			<searchcode><![CDATA[<ul class="icons-list">]]></searchcode>
-			<replacecode><![CDATA[<div class="form-group has-feedback" style="width:250px;float:left">
-	<input id="filterPlugins" name="searchword" type="search" class="form-control" placeholder="{$lang['search_field']}" value="">
+			<searchcode><![CDATA[<div class="panel panel-default">]]></searchcode>
+			<replacecode><![CDATA[<div id="search_pl" style="width:250px;margin: 0 auto 10px;{$hide_search}">
+	<input autocomplete="off" id="filterPlugins" name="searchword" type="search" class="form-control" placeholder="{$lang['search_field']}" value="">
 </div>]]></replacecode>
 		</operation>
 		<operation action="replace">
@@ -62,7 +53,7 @@
 
 	var target = $(e.srcElement || e.currentTarget),
 		filterVal = target.val().toLowerCase(),
-		filterTable = target.parents('.panel').find('.table tbody');				
+		filterTable = target.parents('.content').find('.table tbody');				
 			
 	if ( e.keyCode == 27 )
 		target.val('');
@@ -83,7 +74,7 @@
 			
 	}
 
-	var scroll = target.parents('.panel').find('.table tbody');
+	var scroll = target.parents('.content').find('.table tbody');
 
     if (scroll.length > 0){}
 		
@@ -112,7 +103,7 @@ if (filterPlugins_input.length > 0) {
 
 	var target = $(e.srcElement || e.currentTarget),
 		filterVal = target.val().toLowerCase(),
-		filterTable = target.parents('.panel').find('#tabfiles #container');
+		filterTable = target.parents('form').find('#tabfiles #container');
 			
 	if ( e.keyCode == 27 )
 		target.val('');
@@ -137,13 +128,20 @@ if (filterPlugins_input.length > 0) {
 			
 	}
 
-	var scroll = target.parents('.panel').find('#tabfiles');
+	var scroll = target.parents('form').find('#tabfiles');
 
     if (scroll.length > 0){}
 		
 }
 
 $(function(){
+  
+   	$('[data-toggle="tab"]').click(function(){
+	  
+		if( $(this).attr('href') == '#tabfiles' ) $('#search_pl').css({'opacity':'1','visibility':'visible'});
+		else $('#search_pl').css({'opacity':'0','visibility':'hidden'});
+		  
+ 	});
   
     var filterPlugins_input = $('#filterPlugins');
     if (filterPlugins_input.length > 0) {
@@ -156,6 +154,11 @@ $(function(){
     }  
 
 	$(".sql_editor").each(function() {]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$js_array[] = "engine/skins/codemirror/js/code.js";
+$css_array[] = "engine/skins/codemirror/css/default.css";]]></searchcode>
+			<replacecode><![CDATA[$hide_search = $id ? 'opacity:0' : '';]]></replacecode>
 		</operation>
 	</file>
 </dleplugin>
