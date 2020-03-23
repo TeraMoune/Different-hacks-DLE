@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Enter rand url news</name>
+	<description>Ссылка перейдя по которой пользователя перенаправит в рандомную новость.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/rand_url.php">
+		<operation action="create">
+			<replacecode><![CDATA[<?php
+if( !defined('DATALIFEENGINE') ) {
+	header( "HTTP/1.1 403 Forbidden" );
+	header ( 'Location: ../../' );
+	die( "Hacking attempt!" );
+}
+
+$rand_post = $db->super_query( "SELECT id, alt_name, category, date FROM " . USERPREFIX . "_post WHERE approve = '1' ORDER by rand() LIMIT 1" );
+
+if( $config['allow_alt_url'] ) {
+			
+	if( $config['seo_type'] == 1 OR $config['seo_type'] == 2  ) {
+				
+		if( $row['category'] and $config['seo_type'] == 2 ) {
+					
+			$full_link = $config['http_home_url'] . get_url( $rand_post['category'] ) . "/" . $rand_post['id'] . "-" . $rand_post['alt_name'] . ".html";
+				
+		} else $full_link = $config['http_home_url'] . $rand_post['id'] . "-" . $rand_post['alt_name'] . ".html";
+			
+	} else $full_link = $config['http_home_url'] . date( 'Y/m/d/', $rand_post['date'] ) . $rand_post['alt_name'] . ".html";
+
+} else $full_link = $config['http_home_url'] . "index.php?newsid=" . $rand_post['id'];
+
+header("Location:$full_link");
+die();
+?>]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/engine.php">
+		<operation action="after">
+			<searchcode><![CDATA[switch ( $do ) {]]></searchcode>
+			<replacecode><![CDATA[	case "rand_url" :
+		include (DLEPlugins::Check(ENGINE_DIR . '/modules/rand_url.php'));
+		break;]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
