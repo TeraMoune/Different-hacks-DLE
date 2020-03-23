@@ -24,6 +24,7 @@
  13. [Validity period publications for groups](https://github.com/TeraMoune/Different-hacks-DLE#Validity-period-publications-for-groupsxml)
  14. [Approve files in xfields](https://github.com/TeraMoune/Different-hacks-DLE#approve-files-in-xfieldsxml)
  15. [Mod search plugins](https://github.com/TeraMoune/Different-hacks-DLE#mod-search-pluginsxml)
+ 16. [Enter rand url news](https://github.com/TeraMoune/Different-hacks-DLE#enter-rand-url-newsxml)
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -141,14 +142,12 @@ else params[value.name] = value.value;
 
 #### Validity-period-publications-for-groups.xml
 ---
-
 Добавляет группам функцию 'Срок действия публикации' с рядом действий по наступлению даты. Можно выбрать автоматическое применение определённого действия при добавлении новостей участником группы. В случае если новость предварительно находится на одобрении то правило применяется в момент изменения статуса новости.
 
 В настройках группы в разделе новости две настройки, одна в одной указывается в днях сколько должно пройти с момента публикации. В другой действие которое должно произойти.
 
 #### approve-files-in-xfields.xml
 ---
-
 Добавляет checkbox для файлов загруженных в доп. поле. Переключатель approve параметра который так же определяет возможность скачивания файла с сервера.
 
 В шаблоне доступны доп. теги.
@@ -156,8 +155,11 @@ else params[value.name] = value.value;
 
 #### mod-search-plugins.xml
 ---
-
 Добавляет поле поиска в раздел плагинов для удобства поиска плагина или редактируемого файла.
+
+#### enter-rand-url-news.xml
+---
+Небольшой и очень простой плагин установив который на сайте появиться новый адрес /?do=rand_url, перейдя на который пользователя перенаправит на рандомно полученную новость.
 
 ### Donate
 Для материальной благодарности.
