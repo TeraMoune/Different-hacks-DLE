@@ -28,7 +28,7 @@ if( !defined('DATALIFEENGINE') ) {
 	die( "Hacking attempt!" );
 }
 
-$rand_post = $db->super_query( "SELECT id, alt_name, category, date FROM " . USERPREFIX . "_post WHERE approve = '1' ORDER by rand() LIMIT 1" );
+$rand_post = $db->super_query( "SELECT id, alt_name, category, date FROM " . PREFIX . "_post WHERE approve = '1' ORDER by rand() LIMIT 1" );
 
 if( $config['allow_alt_url'] ) {
 			
