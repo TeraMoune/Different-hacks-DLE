@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Search users null news</name>
+	<description>Добавление для админки в раздел пользователей чекбокс с установкой поиска пользователей без новостей.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/inc/editusers.php">
+		<operation action="replace">
+			<searchcode><![CDATA[		  <div class="col-md-8">
+			{$lang['edit_fdate']}&nbsp;<input class="form-control text-center" style="width:70px;" type="text" name="search_news_f" id="search_news_f" value="{$search_news_f}">
+			{$lang['edit_tdate']}&nbsp;<input class="form-control text-center" style="width:70px;" type="text" name="search_news_t" id="search_news_t" value="{$search_news_t}">
+		  </div>]]></searchcode>
+			<replacecode><![CDATA[		  <div class="col-md-8">
+			{$lang['edit_fdate']}&nbsp;<input class="form-control text-center" style="width:70px;" type="text" name="search_news_f" id="search_news_f" value="{$search_news_f}">
+			{$lang['edit_tdate']}&nbsp;<input class="form-control text-center" style="width:70px;" type="text" name="search_news_t" id="search_news_t" value="{$search_news_t}">
+		    <div class="checkbox"><label><input class="icheck" type="checkbox" name="null_news" value="1" $ifnull_news>Без новостей</label></div>
+		  </div>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[if( $disabled_comments ) $ifch2 = "checked"; else $ifch2 = "";]]></searchcode>
+			<replacecode><![CDATA[$null_news = intval($_REQUEST['null_news']);
+if( $null_news ) $ifnull_news = "checked"; else $ifnull_news = "";]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[if( $disabled_comments ) {
+	$where[] = "(restricted='2' OR restricted='3')";
+}]]></searchcode>
+			<replacecode><![CDATA[if( $null_news ) {
+	$where[] = "news_num = 0";
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
