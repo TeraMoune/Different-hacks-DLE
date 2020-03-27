@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Remove view category in catmenu</name>
+	<description>Опция для удаления видимости категории в общем меню.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[ALTER TABLE `{prefix}_category` ADD `not_menu` tinyint(1) NOT NULL default '0';]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{prefix}_category` DROP `not_menu`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/inc/categories.php">
+		<operation action="after">
+			<searchcode><![CDATA[$allow_rss = intval($_POST['allow_rss']);]]></searchcode>
+			<replacecode><![CDATA[$not_menu = intval($_POST['not_menu']);]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[show_sub, allow_rss]]></searchcode>
+			<replacecode><![CDATA[show_sub, allow_rss, not_menu]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA['$show_sub', '$allow_rss']]></searchcode>
+			<replacecode><![CDATA['$show_sub', '$allow_rss', '$not_menu']]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[show_sub='$show_sub', allow_rss='$allow_rss']]></searchcode>
+			<replacecode><![CDATA[show_sub='$show_sub', allow_rss='$allow_rss', not_menu='$not_menu']]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$row['allow_rss'] = makeDropDown( array ("1" => $lang['opt_sys_yes'], "0" => $lang['opt_sys_no'] ), "allow_rss", $row['allow_rss'] );]]></searchcode>
+			<replacecode><![CDATA[if( $row['not_menu'] ) { $ifnot_menu = "checked"; } else { $ifnot_menu = ""; }]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[<div class="col-sm-6"><div class="checkbox"><label><input class="icheck" type="checkbox" name="disable_search" value="1" {$ifch}>{$lang['cat_d_search']}</label></div></div>]]></searchcode>
+			<replacecode><![CDATA[<div class="col-sm-6" style="max-width:300px;"><div class="checkbox"><label><input class="icheck" type="checkbox" name="not_menu" value="1" {$ifnot_menu}>Исключить из общего меню</label></div></div>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[<div class="checkbox"><label><input class="icheck" type="checkbox" name="disable_search" value="1">{$lang['cat_d_search']}</label></div>]]></searchcode>
+			<replacecode><![CDATA[<div class="checkbox"><label><input class="icheck" type="checkbox" name="not_menu" value="1">Исключить из общего меню</label></div>]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/classes/templates.class.php">
+		<operation action="after">
+			<searchcode><![CDATA[foreach ($nodes as $node) {]]></searchcode>
+			<replacecode><![CDATA[if( !$node['not_menu'] ) {]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$item = str_replace( "{sub-count}", ($indent + 1), $item );]]></searchcode>
+			<replacecode><![CDATA[}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
