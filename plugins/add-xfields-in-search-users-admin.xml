@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Add xfields in search users admin</name>
+	<description>Добавляет выборку поиска по значением доп полей (типа одно поле) в разделе всех пользователей.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/inc/editusers.php">
+		<operation action="after">
+			<searchcode><![CDATA[		<div class="form-group">
+			<div class="col-sm-6">
+				<div class="checkbox"><label><input class="icheck" type="checkbox" id="search_full_name" name="search_full_name" value="1" {$ifsfn}>{$lang['search_full_name']}</label></div>
+				<div class="checkbox"><label><input class="icheck" type="checkbox" name="disabled_news" value="1" $ifch1>{$lang['disabled_news']}</label></div>
+		  </div>
+			<div class="col-sm-6">
+				<div class="checkbox"><label><input class="icheck" type="checkbox" name="search_banned" id="search_banned" value="yes" $ifch>{$lang['user_banned']}</label></div>
+				<div class="checkbox"><label><input class="icheck" type="checkbox" name="disabled_comments" value="1" $ifch2>{$lang['disabled_comments']}</label></div>
+		  </div>
+		</div>]]></searchcode>
+			<replacecode><![CDATA[		<div class="form-group">
+		  <label class="control-label col-md-4">Доп. поле</label>
+		  <div class="col-md-8">
+			<select class="uniform" name="search_xfields" id="search_xfields">{$xfields_list}</select>
+          <input class="form-control" type="text" name="search_xfields_value" id="search_xfields_value" value="{$search_xfields_value}" style="width:220px;">
+		  </div>
+		</div>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[else $group_list = get_groups();]]></searchcode>
+			<replacecode><![CDATA[function profileload() {
+  global $lang, $config;
+  $path = ENGINE_DIR.'/data/xprofile.txt';
+  $filecontents = file($path);
+	
+    if (!is_array($filecontents)) $filecontents = array();
+	  
+    foreach ($filecontents as $name => $value) {
+      $filecontents[$name] = explode("|", trim($value));
+      foreach ($filecontents[$name] as $name2 => $value2) {
+        $value2 = str_replace("&#124;", "|", $value2); 
+        $value2 = str_replace("__NEWL__", "\r\n", $value2);
+		$value2 = html_entity_decode($value2, ENT_QUOTES, $config['charset']);
+        $filecontents[$name][$name2] = $value2;
+      }
+    }
+    return $filecontents;
+}
+
+$xfields = profileload();
+$xfields_list = array();
+if( !isset($_REQUEST['search_xfields']) ) $xfields_list[] = '<option selected value="0">Выберите поле</option>';
+else $xfields_list[] = '<option value="0">Выберите поле</option>';
+foreach( $xfields as $value ) {
+	
+	if( $value[3] == 'text' ) {
+		if( isset($_REQUEST['search_xfields']) AND $_REQUEST['search_xfields'] == $value[0] ) $xfields_list[] = '<option selected value="'.$value[0].'">'.$value[1].'</option>';
+		else $xfields_list[] = '<option value="'.$value[0].'">'.$value[1].'</option>';
+	}
+  
+}
+$xfields_list = implode('', $xfields_list);]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[if( ! empty( $_REQUEST['search'] ) ) {]]></searchcode>
+			<replacecode><![CDATA[if( ! empty( $_REQUEST['search_xfields'] ) AND $search_xfields_value ) {
+		
+	$where[] = "SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$_REQUEST['search_xfields']}|', -1), '||', 1) LIKE '%{$search_xfields_value}%'";
+
+}]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$search_mail = $db->safesql( trim( htmlspecialchars( strip_tags( $_REQUEST['search_mail'] ) ) ) );]]></searchcode>
+			<replacecode><![CDATA[$search_xfields_value = $db->safesql( trim( htmlspecialchars( strip_tags( $_REQUEST['search_xfields_value'] ) ) ) );]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
