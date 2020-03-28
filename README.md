@@ -24,7 +24,11 @@
  13. [Validity period publications for groups](https://github.com/TeraMoune/Different-hacks-DLE#Validity-period-publications-for-groupsxml)
  14. [Approve files in xfields](https://github.com/TeraMoune/Different-hacks-DLE#approve-files-in-xfieldsxml)
  15. [Mod search plugins](https://github.com/TeraMoune/Different-hacks-DLE#mod-search-pluginsxml)
- 16. [Enter rand url news](https://github.com/TeraMoune/Different-hacks-DLE#enter-rand-url-newsxml)
+ 16. [Explode xfields](https://github.com/TeraMoune/Different-hacks-DLE#explode-xfieldsxml)
+ 17. [Search users null news](https://github.com/TeraMoune/Different-hacks-DLE#search-users-null-newsxml)
+ 18. [Remove view category in catmenu](https://github.com/TeraMoune/Different-hacks-DLE#remove-view-category-in-catmenuxml)
+ 19. [Add xfields in search users admin](https://github.com/TeraMoune/Different-hacks-DLE#add-xfields-in-search-users-adminxml)
+
 
 #### Added-tags-in-categorymenu.xml
 ---
@@ -160,6 +164,25 @@ else params[value.name] = value.value;
 #### enter-rand-url-news.xml
 ---
 Небольшой и очень простой плагин установив который на сайте появиться новый адрес **/?do=rand_url**, перейдя на который пользователя перенаправит на рандомно полученную новость.
+
+#### explode-xfields.xml
+---
+  - Шаблон применения: **fullstory.tpl**, **shortstory.tpl**, и кастомные шаблоны.
+  
+Добавляет тег [xfvalue_name_N explode="X"]. Выведет конкретное значение по счёту где N число если строка имеет разделитель переданный X.
+Например: name1,name2 (вывести name1 при помощи [xfvalue_name_1 explode=","])
+
+#### search-users-null-news.xml
+---
+В раздел всех пользователей в админке под выборкой новостей добавит опцию при котором будет искать людей без добавленых новостей.
+
+#### add-xfields-in-search-users-admin.xml
+---
+В разделе всех пользователей в админке добавил select выборку по доп. полям среди однострочных и поле ниже для значения этого поля.
+
+#### remove-view-category-in-catmenu.xml
+---
+В редактировании и при создании категории будет опция при включении которой категория не будет видна в общем меню категорий выводимой тегом {catmenu}
 
 ### Donate
 Для материальной благодарности.
