@@ -28,6 +28,7 @@
  17. [Search users null news](https://github.com/TeraMoune/Different-hacks-DLE#search-users-null-newsxml)
  18. [Remove view category in catmenu](https://github.com/TeraMoune/Different-hacks-DLE#remove-view-category-in-catmenuxml)
  19. [Add xfields in search users admin](https://github.com/TeraMoune/Different-hacks-DLE#add-xfields-in-search-users-adminxml)
+ 20. [Checkbox userxfields](https://github.com/TeraMoune/Different-hacks-DLE#checkbox-userxfieldsxml)
 
 
 #### Added-tags-in-categorymenu.xml
@@ -183,6 +184,10 @@ else params[value.name] = value.value;
 #### remove-view-category-in-catmenu.xml
 ---
 В редактировании и при создании категории будет опция при включении которой категория не будет видна в общем меню категорий выводимой тегом {catmenu}
+
+#### checkbox-userxfields.xml
+---
+Добавляет дополнительное поле типа 'Переключатель'
 
 ### Donate
 Для материальной благодарности.
