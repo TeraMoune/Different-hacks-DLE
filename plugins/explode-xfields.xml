@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>explode xfields</name>
+	<description>Добавляет тег [xfvalue_name_N explode=&quot;X&quot;]. Выведет конкретное значение по N индексу если строка имеет разделитель переданный X.
+Например: name1,name2 (вывести name1 при помощи [xfvalue_name_1 explode=&quot;,&quot;])</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/show.full.php">
+		<operation action="before">
+			<searchcode><![CDATA[if ( $value[3] == "yesorno" ) {]]></searchcode>
+			<replacecode><![CDATA[if ( preg_match( "#\\[xfvalue_{$preg_safe_name}_(\d+) explode=['\"](.+?)['\"]\\]#i", $tpl->copy_template, $matches ) ) {
+	
+	if( $xfieldsdata[$value[0]] AND stripos($xfieldsdata[$value[0]], $matches[2]) !== false ) {
+				
+		$xfieldsdata_tmp = explode($matches[2],$xfieldsdata[$value[0]]);
+		if( $xfieldsdata_tmp[($matches[1] - 1)] ) $tpl->set( $matches[0], $xfieldsdata_tmp[($matches[1] - 1)] );
+		else $tpl->set( $matches[0], '' );
+		
+	} else $tpl->set( $matches[0], '' );
+  
+}]]></replacecode>
+			<searchcount>1</searchcount>
+			<replacecount>2</replacecount>
+		</operation>
+	</file>
+	<file name="engine/modules/show.short.php">
+		<operation action="before">
+			<searchcode><![CDATA[if ( $value[3] == "yesorno" ) {]]></searchcode>
+			<replacecode><![CDATA[if ( preg_match( "#\\[xfvalue_{$preg_safe_name}_(\d+) explode=['\"](.+?)['\"]\\]#i", $tpl->copy_template, $matches ) ) {
+	
+	if( $xfieldsdata[$value[0]] AND stripos($xfieldsdata[$value[0]], $matches[2]) !== false ) {
+				
+		$xfieldsdata_tmp = explode($matches[2],$xfieldsdata[$value[0]]);
+		if( $xfieldsdata_tmp[($matches[1] - 1)] ) $tpl->set( $matches[0], $xfieldsdata_tmp[($matches[1] - 1)] );
+		else $tpl->set( $matches[0], '' );
+		
+	} else $tpl->set( $matches[0], '' );
+  
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.custom.php">
+		<operation action="before">
+			<searchcode><![CDATA[if ( $value[3] == "yesorno" ) {]]></searchcode>
+			<replacecode><![CDATA[if ( preg_match( "#\\[xfvalue_{$preg_safe_name}_(\d+) explode=['\"](.+?)['\"]\\]#i", $tpl->copy_template, $matches ) ) {
+	
+	if( $xfieldsdata[$value[0]] AND stripos($xfieldsdata[$value[0]], $matches[2]) !== false ) {
+				
+		$xfieldsdata_tmp = explode($matches[2],$xfieldsdata[$value[0]]);
+		if( $xfieldsdata_tmp[($matches[1] - 1)] ) $tpl->set( $matches[0], $xfieldsdata_tmp[($matches[1] - 1)] );
+		else $tpl->set( $matches[0], '' );
+		
+	} else $tpl->set( $matches[0], '' );
+  
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
