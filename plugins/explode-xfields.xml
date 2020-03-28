@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>explode xfields</name>
-	<description>Добавляет тег [xfvalue_name_N explode="X"]. Выведет конкретное значение по N индексу если строка имеет разделитель переданный X.
-Например: name1,name2 (вывести name1 при помощи [xfvalue_name_1 explode=","])</description>
+	<description></description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
