@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Search users null news</name>
-	<description>Добавление для админки в раздел пользователей чекбокс с установкой поиска пользователей без новостей.</description>
+	<description></description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
