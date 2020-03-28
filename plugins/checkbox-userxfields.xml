@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Checkbox userxfields</name>
+	<description></description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/inc/userfields.php">
+		<operation action="replace">
+			<searchcode><![CDATA[		$xfieldinput[$fieldname] = $select;
+
+		}
+      }]]></searchcode>
+			<replacecode><![CDATA[		$xfieldinput[$fieldname] = $select;
+
+		}
+      } elseif ($value[3] == "checkbox") {
+
+		$fieldvalue = str_replace('&amp;', '&', $fieldvalue);
+		
+		if (isset($adminmode)) {
+            $select = "<label><input class=\"uniform\" type=\"checkbox\" name=\"xfield[$fieldname]\" value=\"1\" ".($fieldvalue ? " checked" : "")."> {$value[1]}</label>" ;
+		} else {
+			$select = "<label><input class=\"switch\" type=\"checkbox\" name=\"xfield[$fieldname]\" value=\"1\" ".($fieldvalue ? " checked" : "")."> {$value[1]}</label>";
+		}
+
+		$selected = $fieldvalue ? " checked" : "";
+
+		if ( isset($adminmode) ) {
+		
+		      $output .= <<<HTML
+				<div class="form-group">
+				  <label class="control-label col-md-3 col-sm-3">{$value[1]}:</label>
+				  <div class="col-md-9 col-sm-9">
+					<input class="switch" type="checkbox" name="xfield[$fieldname]" value="1" {$selected}>
+				  </div>
+				 </div>
+HTML;
+		
+		} else {
+
+        $output .= <<<HTML
+
+<tr>
+<td>$value[1]:</td>
+<td class="xprofile"><input class="switch" type="checkbox" name="xfield[$fieldname]" value="1" {$selected}></td>
+</tr>
+HTML;
+
+		$xfieldinput[$fieldname] = $select;
+
+		}
+      }]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[<option value="select"<?php echo ($editedxfield[3] == "select") ? " selected" : ""; ?>><?php echo $lang['xfield_xsel']; ?></option>]]></searchcode>
+			<replacecode><![CDATA[<option value="checkbox"<?php echo ($editedxfield[3] == "checkbox") ? " selected" : ""; ?>>Переключатель</option>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[elseif($value[3] == "select") $type=$lang['xfield_xsel'];]]></searchcode>
+			<replacecode><![CDATA[elseif($value[3] == "checkbox") $type="Переключатель";]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
