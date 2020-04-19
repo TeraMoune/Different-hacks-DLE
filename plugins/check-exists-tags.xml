@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>Check exists tags</name>
-	<description>[exists-tags="tagname"] text [/exists-tags] Выводит заключённый между блоками содержимое если указанный 'tagname' тег существует в новости. Можно указывать несколько тегов через запятую.</description>
+	<description>[exists-tags="tagname"] text [/exists-tags] Выводит заключённый между блоками содержимое если указанный "tagname" тег существует в новости. Можно указывать несколько тегов через запятую.</description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
@@ -62,12 +62,13 @@
 	global $row;
 	
   	$tags = explode(',', $matches[1]);
+  	$isset_news = explode(', ', $row['tags']);
 	$return = "";
 	foreach( $tags as $val ) {
 		
 		$val = trim($val);
 		
-		if (stripos ( $row['tags'], $val ) !== false) {
+		if ( in_array( $val, $isset_news ) ) {
 		  
 			$return = trim($matches[2]);
 		  	break;
