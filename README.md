@@ -29,6 +29,8 @@
  18. [Remove view category in catmenu](https://github.com/TeraMoune/Different-hacks-DLE#remove-view-category-in-catmenuxml)
  19. [Add xfields in search users admin](https://github.com/TeraMoune/Different-hacks-DLE#add-xfields-in-search-users-adminxml)
  20. [Checkbox userxfields](https://github.com/TeraMoune/Different-hacks-DLE#checkbox-userxfieldsxml)
+ 21. [Info-tags in attachment](https://github.com/TeraMoune/Different-hacks-DLE#info-tags-in-attachmentxml)
+ 22. [Auto-upload image](https://github.com/TeraMoune/Different-hacks-DLE#auto-upload-imagexml)
 
 
 #### Added-tags-in-categorymenu.xml
@@ -189,6 +191,27 @@ else params[value.name] = value.value;
 ---
 Добавляет дополнительное поле типа 'Переключатель'
 
+#### info-tags-in-attachment.xml
+---
+  - Шаблон применения: **attachment.tpl**.
+  
+Добавляет дополнительное теги в шаблон которые создаются при вставке тега аттачмента с параметром `info="..."` в котором можно прописать дополнительные теги и их значения `tags:value||tags2:value2`. После в шаблоне можно будет использовать теги `[info_tags]{info_value}[/info_tags]`.
+
+Например:
+[attachment=N:file info="quality:HDRip||translate:Дублированный|iTunes"]
+
+В шаблоне **attachment.tpl** доступно применение тегов:
+  - [info_quality]Качество: {info_quality}[/info_quality]
+  - [info_translate]Перевод: {info_translate}[/info_translate]
+
+#### auto-upload-image.xml
+---
+Пытается загрузить любое внешнее изображение в описании с изменением url и созданием миниатюры согласно настройкам.
+
+`P.S. Важно помнить чем больше изображений тем дольше время ожидания после нажатия кнопки отправить, слишком большое количество картинок может привести к превышених времени ожидания и тогда картинки будут загружены не все и новость вероятно тоже не будет опубликована, а часть картинок которая уже успела будет пылится на сервере.
+Так, что применять осторожно.`
+
+
 ### Donate
 Для материальной благодарности.
 
@@ -196,4 +219,7 @@ else params[value.name] = value.value;
 
 <img src="https://www.webmoney.ru/img/logo-wm-sat-small.png" width="139" height="34">
 
- - Z990082286464
+ - Z990082286464 (webmoney usd)
+ - 4100115063692304 (yandex)
+
+Предложения по доработкам в телеграм.
