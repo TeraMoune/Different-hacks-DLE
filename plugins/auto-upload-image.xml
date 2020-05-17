@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Auto upload image</name>
+	<description>Автозагрузка изображений из внешних источников при добавлении новостей.</description>
+	<icon></icon>
+	<version>0.1</version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[ALTER TABLE `{userprefix}_usergroups` ADD `auto_upload_image` tinyint(1) NOT NULL default '0';]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{userprefix}_usergroups` DROP `auto_upload_image`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/addnews.php">
+		<operation action="before">
+			<searchcode><![CDATA[		if ( !$user_group[$member_id['user_group']]['allow_html'] ) {
+
+			$config['allow_site_wysiwyg'] = 0;
+			$_POST['short_story'] = strip_tags ($_POST['short_story']);
+			$_POST['full_story'] = strip_tags ($_POST['full_story']);
+
+		}]]></searchcode>
+			<replacecode><![CDATA[if( $config['auto_upload'] AND $user_group[$member_id['user_id']]['auto_upload_image'] ) {
+  
+	include_once (DLEPlugins::Check(ENGINE_DIR . '/classes/uploads/upload.class.php'));
+
+	$t_seite = intval($config['t_seite']);
+	$m_seite = intval($config['t_seite']);
+	$t_size = $config['max_image'];
+	$m_size = $config['medium_image'];
+	$make_thumb = true;
+	$make_medium = true;
+	if ($config['allow_watermark']) $make_watermark = true; else $make_watermark = false;
+
+	if(!$t_size) $make_thumb = false;
+	if(!$m_size) $make_medium = false;
+
+	$images = array();
+	preg_match_all('/(img|src)=("|\')[^"\'>]+/i', $_POST['short_story'].$_POST['full_story'], $media);
+	$data=preg_replace('/(img|src)("|\'|="|=\')(.*)/i',"$3",$media[0]);
+
+	$data = array_unique($data);
+						
+	foreach( $data as $url ) {
+		
+		$info = pathinfo($url);
+		$path = parse_url($url);
+		$home_path = parse_url($config['http_home_url']);
+		
+		if (isset($info['extension'])) {
+				
+			if($path['host'] == $home_path['host']) continue;
+			if ($info['filename'] == "spoiler-plus" OR $info['filename'] == "spoiler-minus" OR strpos($info['dirname'], 'engine/data/emoticons') !== false) continue;
+			$info['extension'] = strtolower($info['extension']);
+			if (($info['extension'] == 'jpg') || ($info['extension'] == 'jpeg') || ($info['extension'] == 'gif') || ($info['extension'] == 'png')) array_push($images, $url);
+				
+		}
+		
+	}
+			
+	if ( count($images) ) {
+		
+		$uploads_image=0;
+		$patterns = array();
+		$replacements = array();
+		$patterns_t = array();
+		$replacements_t = array();      
+		
+		foreach( $images as $url ) {
+			
+			$uploads_image++;
+			$_POST['imageurl'] = $url;
+			$uploader = new FileUploader('short_story', 0, $member_id['name'], $t_size, $t_seite, $make_thumb, $make_watermark, $m_size, $m_seite, $make_medium);
+			$result = $uploader->FileUpload();
+			$result = json_decode($result, true);
+         	
+          	if( preg_match('#thumbs\/|medium\/#', $result['link']) ) {
+
+              $patterns[] = "/<img src=\"".str_replace('/', '\/', $url)."\"(.*?)>/";
+              $i_o = preg_replace('#thumbs\/|medium\/#','', $result['link']);
+              $replacements[] = "<a class=\"highslide\" href=\"{$i_o}\" target=\"_blank\"><img src=\"{$result['link']}\" $1></a>";
+              
+            } else {
+ 
+              $patterns[] = "/".str_replace('/', '\/', $url)."/";
+              $replacements[] = $result['link'];             
+              
+            }
+          
+		}
+		
+		if( $uploads_image ) $uploads_image = "<br />Количество загруженых изображений из внешних источников: {$uploads_image}";
+
+	}
+
+}]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[if( $config['allow_alt_url'] ) msgbox( $lang['add_ok'], "{$msg} <a href=\"{$config['http_home_url']}" . "addnews.html\">$lang[add_noch]</a> $lang[add_or] <a href=\"{$config['http_home_url']}\">$lang[all_prev]</a>" );
+else msgbox( $lang['add_ok'], "{$msg} <a href=\"$PHP_SELF?do=addnews\">$lang[add_noch]</a> $lang[add_or] <a href=\"{$config['http_home_url']}\">$lang[all_prev]</a>" );]]></searchcode>
+			<replacecode><![CDATA[if( $config['allow_alt_url'] ) msgbox( $lang['add_ok'], "{$msg} <a href=\"{$config['http_home_url']}" . "addnews.html\">$lang[add_noch]</a> $lang[add_or] <a href=\"{$config['http_home_url']}\">$lang[all_prev]</a>{$uploads_image}" );
+else msgbox( $lang['add_ok'], "{$msg} <a href=\"$PHP_SELF?do=addnews\">$lang[add_noch]</a> $lang[add_or] <a href=\"{$config['http_home_url']}\">$lang[all_prev]</a>{$uploads_image}" );]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[if( $config['allow_site_wysiwyg'] ) {]]></searchcode>
+			<replacecode><![CDATA[if( $uploads_image ) {
+	$_POST['full_story'] = preg_replace($patterns, $replacements, $_POST['full_story']);
+	$_POST['short_story'] = preg_replace($patterns, $replacements, $_POST['short_story']);
+}]]></replacecode>
+			<searchcount>1</searchcount>
+		</operation>
+	</file>
+	<file name="engine/inc/options.php">
+		<operation action="after">
+			<searchcode><![CDATA[showRow( $lang['opt_sys_biw'], $lang['opt_sys_biwd'], makeCheckBox( "save_con[bbimages_in_wysiwyg]", "{$config['bbimages_in_wysiwyg']}" ) );]]></searchcode>
+			<replacecode><![CDATA[showRow( $lang['auto_upload'], $lang['auto_upload2'], makeCheckBox( "save_con[auto_upload]", "{$config['auto_upload']}" ) );]]></replacecode>
+		</operation>
+	</file>
+	<file name="language/Russian/adminpanel.lng">
+		<operation action="after">
+			<searchcode><![CDATA['wysiwyg_language'		=>  "ru",]]></searchcode>
+			<replacecode><![CDATA['auto_upload'		=>  "Автоматическая загрузка изображений",
+'auto_upload2'		=>  "В случае включения данной настройки при добавлении новостей будет автоматически загружены все изображения из внешних источников.",
+'auto_upload_group' =>  "Разрешить автоматическую загрузку изображений",]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/inc/usergroup.php">
+		<operation action="after">
+			<searchcode><![CDATA[    <tr>
+        <td><h6 class="media-heading text-semibold">{$lang['group_edit_days']}</h6><span class="text-muted text-size-small hidden-xs">{$lang['hint_edit_days']}</span></td>
+        <td><input type="text" class="form-control" style="max-width:100px; text-align: center;" name="max_edit_days" value="{$max_edit_days_value}"></td>
+    </tr>]]></searchcode>
+			<replacecode><![CDATA[    <tr>
+        <td><h6 class="media-heading text-semibold">{$lang['auto_upload_group']}</h6></td>
+        <td><input class="switch" type="checkbox" name="auto_upload_image" {$auto_upload_image} value="1"></td>
+    </tr>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$media_comments = intval($_REQUEST['media_comments']);]]></searchcode>
+			<replacecode><![CDATA[$auto_upload_image = intval($_REQUEST['auto_upload_image']);]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[video_comments, media_comments]]></searchcode>
+			<replacecode><![CDATA[video_comments, media_comments, auto_upload_image]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA['$video_comments', '$media_comments']]></searchcode>
+			<replacecode><![CDATA['$video_comments', '$media_comments', '$auto_upload_image']]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[media_comments='$media_comments']]></searchcode>
+			<replacecode><![CDATA[media_comments='$media_comments', auto_upload_image='$auto_upload_image']]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[if( $user_group[$id]['allow_mail_files'] ) $allow_mail_files = "checked";]]></searchcode>
+			<replacecode><![CDATA[if( $user_group[$id]['auto_upload_image'] ) $auto_upload_image = "checked";]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
