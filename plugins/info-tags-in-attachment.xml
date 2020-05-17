@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Info tags in attachment</name>
+	<description></description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/functions.php">
+		<operation action="replace">
+			<searchcode><![CDATA[$find_2[] = "#\[attachment={$row['id']}:(.+?)\]#i";]]></searchcode>
+			<replacecode><![CDATA[$find_2[] = "#\[attachment={$row['id']}:(.+?)( info=\"(.*?)\")?\]#i";
+preg_match( "#\[attachment={$row['id']}:(.+?)( info=\"(.*?)\")?\]#i", $story, $match );
+
+if( trim($match[3]) ) {
+
+	$tmp_info = explode('||', $match[3]);
+			
+	foreach( $tmp_info as $info_value ) {
+				
+		if( $info_value ) {
+			$info_value = explode(':', $info_value);
+					
+			$tpl->set( '{info_'.$info_value[0].'}', $info_value[1] );
+			$tpl->set( '[info_'.$info_value[0].']', "" );
+			$tpl->set( '[/info_'.$info_value[0].']', "" );					
+		}
+				
+	}
+			
+} else $tpl->copy_template = preg_replace( "#{info_.*?}|\[info_.*?\].*?\[/info_.*?\]#i", "", $tpl->copy_template );]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->compile( 'attachment' );]]></searchcode>
+			<replacecode><![CDATA[$tpl->result['attachment'] = preg_replace( "#{info_.*?}|\[info_.*?\].*?\[/info_.*?\]#i", "", $tpl->result['attachment'] );]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
