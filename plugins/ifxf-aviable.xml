@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dleplugin>
 	<name>ifxf-aviable</name>
-	<description>Примеры: [ifxf-aviable xfname!=&quot;actors&quot; xf=&quot;Пола Пэттон&quot;] text [/ifxf-aviable], [ifxf-aviable xf!=&quot;Пола Пэттон&quot;] text [/ifxf-aviable] (Допустимо перечисление через запятую)</description>
+	<description>Примеры: [ifxf-aviable xfname!='actors' xf='Пола Пэттон'] text [/ifxf-aviable], [ifxf-aviable xf!='Пола Пэттон'] text [/ifxf-aviable] (Допустимо перечисление через запятую)</description>
 	<icon></icon>
 	<version></version>
 	<dleversion>13</dleversion>
