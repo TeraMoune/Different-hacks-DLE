@@ -31,6 +31,7 @@
  20. [Checkbox userxfields](https://github.com/TeraMoune/Different-hacks-DLE#checkbox-userxfieldsxml)
  21. [Info-tags in attachment](https://github.com/TeraMoune/Different-hacks-DLE#info-tags-in-attachmentxml)
  22. [Auto-upload image](https://github.com/TeraMoune/Different-hacks-DLE#auto-upload-imagexml)
+ 23. [Ifxf aviable](https://github.com/TeraMoune/Different-hacks-DLE#ifxf-aviablexml)
 
 
 #### Added-tags-in-categorymenu.xml
@@ -185,7 +186,7 @@ else params[value.name] = value.value;
 
 #### remove-view-category-in-catmenu.xml
 ---
-В редактировании и при создании категории будет опция при включении которой категория не будет видна в общем меню категорий выводимой тегом {catmenu}
+В редактировании и при создании категории будет опция при включении которой категория не будет видна в общем меню категорий выводимой тегом **{catmenu}**
 
 #### checkbox-userxfields.xml
 ---
@@ -210,6 +211,12 @@ else params[value.name] = value.value;
 
 `P.S. Важно помнить чем больше изображений тем дольше время ожидания после нажатия кнопки отправить, слишком большое количество картинок может привести к превышении времени ожидания и тогда картинки будут загружены не все и новость вероятно тоже не будет опубликована, а часть картинок которая уже успела будет пылится на сервере.
 Так, что применять осторожно.`
+
+#### ifxf-aviable.xml
+---
+  - Шаблон применения: **main.tpl** и подключенные при помощи `{include file="name.tpl"}`.
+Добавляет теги `[ifxf-aviable xfname="xf_name1,xf_name2" xf="xf_value1,xf_value2"] text [/ifxf-aviable]` которые работают как другие aviable и предназначен для отображения или сокрытия содержимого в тегах на страницах поиска новостей по перекрёстным ссылкам доп. полей.
+Два параметра xfname и xf, первый имя поля, второй значение. Можно совмещать или использовать по отдельности. Так же можно добавить знак (!) перед (=) дабы изменить правила поиска и сделать условие всё кроме указанных значений.
 
 
 ### Donate
