@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>ifxf-aviable</name>
+	<description>Примеры: [ifxf-aviable xfname!=&quot;actors&quot; xf=&quot;Пола Пэттон&quot;] text [/ifxf-aviable], [ifxf-aviable xf!=&quot;Пола Пэттон&quot;] text [/ifxf-aviable] (Допустимо перечисление через запятую)</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<file name="engine/modules/main.php">
+		<operation action="before">
+			<searchcode><![CDATA[$tpl->compile ( 'main' );]]></searchcode>
+			<replacecode><![CDATA[if(strpos( $tpl->copy_template, "[ifxf-aviable" ) !== false ) {
+	$tpl->copy_template = preg_replace_callback ( "#\\[ifxf-aviable(.+?)\\](.+?)\\[/ifxf-aviable\\]#is", "check_xf_aviable", $tpl->copy_template );
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/functions.php">
+		<operation action="before">
+			<searchcode><![CDATA[function check_xfvalue( $matches=array() ) {]]></searchcode>
+			<replacecode><![CDATA[function check_xf_aviable( $matches=array() ) {
+	global $dle_module, $xf, $xfname;
+	
+	$matches[1] = trim($matches[1]);
+	$check_values = array();
+	
+	if( $dle_module == 'xfsearch' ) {
+		
+		$xf_n = $xf_v = false;
+		$ct = 0;
+		
+		if( preg_match( "#xfname\!\=\s*['\"](.+?)['\"]#i", $matches[1], $match ) ) {
+			$ct++;
+			$tmp_values = explode( ",", trim($match[1]) );
+			
+			foreach($tmp_values as $check_value) {
+				$check_values[] = trim($check_value);
+			}
+			
+			if( !in_array($xfname, $check_values) ) {
+				$xf_n = true;
+			}			
+
+		}		
+		
+		if( preg_match( "#xfname\=\s*['\"](.+?)['\"]#i", $matches[1], $match ) ) {
+			$ct++;
+			$tmp_values = explode( ",", trim($match[1]) );
+			
+			foreach($tmp_values as $check_value) {
+				$check_values[] = trim($check_value);
+			}
+			
+			if( in_array($xfname, $check_values) ) {
+				$xf_n = true;
+			}		
+
+		}		
+		
+		if( preg_match( "#xf\!\=\s*['\"](.+?)['\"]#i", $matches[1], $match ) ) {
+			$ct++;
+			$tmp_values = explode( ",", trim($match[1]) );
+			
+			foreach($tmp_values as $check_value) {
+				$check_values[] = trim($check_value);
+			}
+			
+			if( !in_array($xf, $check_values) ) {
+				$xf_v = true;
+			}		
+
+		}		
+		
+		if( preg_match( "#xf\=\s*['\"](.+?)['\"]#i", $matches[1], $match ) ) {
+			$ct++;
+			$tmp_values = explode( ",", trim($match[1]) );
+			
+			foreach($tmp_values as $check_value) {
+				$check_values[] = trim($check_value);
+			}
+			
+			if( in_array($xf, $check_values) ) {
+				$xf_v = true;
+			}			
+
+		}
+
+		if( $ct == 2 AND ( $xf_n AND $xf_v ) ) return $matches[2];
+		elseif( $ct == 1 AND ( $xf_n OR $xf_v ) ) return $matches[2];
+		else return "";
+		
+	} else return "";
+		
+	return $matches[0];
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
