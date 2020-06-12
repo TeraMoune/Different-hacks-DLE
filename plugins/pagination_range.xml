@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Pagination range</name>
+	<description></description>
+	<icon></icon>
+	<version></version>
+	<dleversion>13</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/inc/options.php">
+		<operation action="after">
+			<searchcode><![CDATA[showRow( $lang['opt_sys_biw'], $lang['opt_sys_biwd'], makeCheckBox( "save_con[bbimages_in_wysiwyg]", "{$config['bbimages_in_wysiwyg']}" ) );]]></searchcode>
+			<replacecode><![CDATA[showRow( "[Pagination] После какого количества элементов выставлять многоточие", "По умолчанию: 10", "<input  type=\"number\" class=\"form-control\"  name=\"save_con[pagination_range]\" value=\"{$config['pagination_range']}\" >" );
+showRow( "[Pagination] Количество элементов по бокам от активной кнопки", "По умолчанию: 4", "<input  type=\"number\" class=\"form-control\"  name=\"save_con[pagination_range_lr]\" value=\"{$config['pagination_range_lr']}\" >" );]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$save_con['mail_comments'] = intval($save_con['mail_comments']);]]></searchcode>
+			<replacecode><![CDATA[$save_con['pagination_range'] = intval($save_con['pagination_range']);
+$save_con['pagination_range_lr'] = intval($save_con['pagination_range_lr']);]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/show.short.php">
+		<operation action="replace">
+			<searchcode><![CDATA[$enpages_count <= 10]]></searchcode>
+			<replacecode><![CDATA[$enpages_count <= ($config['pagination_range'] ? $config['pagination_range'] : 10)]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$end = 10;]]></searchcode>
+			<replacecode><![CDATA[$end = ($config['pagination_range'] ? $config['pagination_range'] : 10);]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$cstart > 6]]></searchcode>
+			<replacecode><![CDATA[$cstart > (($config['pagination_range'] ? $config['pagination_range'] : 10) - ($config['pagination_range_lr'] ? $config['pagination_range_lr'] : 4))]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$start = $cstart - 4;]]></searchcode>
+			<replacecode><![CDATA[$start = $cstart - ($config['pagination_range_lr'] ? $config['pagination_range_lr'] : 4);]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$end = $start + 8;]]></searchcode>
+			<replacecode><![CDATA[$end = $start + (2 * ($config['pagination_range_lr'] ? $config['pagination_range_lr'] : 4));]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[$start = $enpages_count - 9;]]></searchcode>
+			<replacecode><![CDATA[$start = $enpages_count - (($config['pagination_range'] ? $config['pagination_range'] : 10) - 1);]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
