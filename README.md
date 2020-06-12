@@ -32,6 +32,7 @@
  21. [Info-tags in attachment](https://github.com/TeraMoune/Different-hacks-DLE#info-tags-in-attachmentxml)
  22. [Auto-upload image](https://github.com/TeraMoune/Different-hacks-DLE#auto-upload-imagexml)
  23. [Ifxf aviable](https://github.com/TeraMoune/Different-hacks-DLE#ifxf-aviablexml)
+ 24. [Pagination_range](https://github.com/TeraMoune/Different-hacks-DLE#pagination_rangexml)
 
 
 #### Added-tags-in-categorymenu.xml
@@ -217,6 +218,10 @@ else params[value.name] = value.value;
   - Шаблон применения: **main.tpl** и подключенные при помощи `{include file="name.tpl"}`.
 Добавляет теги `[ifxf-aviable xfname="xf_name1,xf_name2" xf="xf_value1,xf_value2"] text [/ifxf-aviable]` которые работают как другие aviable и предназначен для отображения или сокрытия содержимого в тегах на страницах поиска новостей по перекрёстным ссылкам доп. полей.
 Два параметра xfname и xf, первый имя поля, второй значение. Можно совмещать или использовать по отдельности. Так же можно добавить знак (!) перед (=) дабы изменить правила поиска и сделать условие всё кроме указанных значений.
+
+#### pagination_range.xml
+---
+Позволяет повлиять на пагинацию в настройках в разделе **Новости** будут две настройки с префиксом [Pagination]. Одна указывает через какое количество выставлять многоточие. Вторая указывает количество кнопок по бокам от текущей.
 
 
 ### Donate
