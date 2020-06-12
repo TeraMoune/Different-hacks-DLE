@@ -3,12 +3,13 @@
 	<name>Auto upload image</name>
 	<description>Автозагрузка изображений из внешних источников при добавлении новостей.</description>
 	<icon></icon>
-	<version>0.1</version>
-	<dleversion>13</dleversion>
+	<version>0.2</version>
+	<dleversion>14</dleversion>
 	<versioncompare>greater</versioncompare>
 	<upgradeurl></upgradeurl>
 	<filedelete>0</filedelete>
 	<needplugin></needplugin>
+	<mnotice>0</mnotice>
 	<mysqlinstall><![CDATA[ALTER TABLE `{userprefix}_usergroups` ADD `auto_upload_image` tinyint(1) NOT NULL default '0';]]></mysqlinstall>
 	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
 	<mysqlenable><![CDATA[]]></mysqlenable>
@@ -19,6 +20,7 @@
 	<phpenable><![CDATA[]]></phpenable>
 	<phpdisable><![CDATA[]]></phpdisable>
 	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
 	<file name="engine/modules/addnews.php">
 		<operation action="before">
 			<searchcode><![CDATA[		if ( !$user_group[$member_id['user_group']]['allow_html'] ) {
@@ -104,10 +106,8 @@
 }]]></replacecode>
 		</operation>
 		<operation action="replace">
-			<searchcode><![CDATA[if( $config['allow_alt_url'] ) msgbox( $lang['add_ok'], "{$msg} <a href=\"{$config['http_home_url']}" . "addnews.html\">$lang[add_noch]</a> $lang[add_or] <a href=\"{$config['http_home_url']}\">$lang[all_prev]</a>" );
-else msgbox( $lang['add_ok'], "{$msg} <a href=\"$PHP_SELF?do=addnews\">$lang[add_noch]</a> $lang[add_or] <a href=\"{$config['http_home_url']}\">$lang[all_prev]</a>" );]]></searchcode>
-			<replacecode><![CDATA[if( $config['allow_alt_url'] ) msgbox( $lang['add_ok'], "{$msg} <a href=\"{$config['http_home_url']}" . "addnews.html\">$lang[add_noch]</a> $lang[add_or] <a href=\"{$config['http_home_url']}\">$lang[all_prev]</a>{$uploads_image}" );
-else msgbox( $lang['add_ok'], "{$msg} <a href=\"$PHP_SELF?do=addnews\">$lang[add_noch]</a> $lang[add_or] <a href=\"{$config['http_home_url']}\">$lang[all_prev]</a>{$uploads_image}" );]]></replacecode>
+			<searchcode><![CDATA[msgbox( $lang['add_ok'], "{$msg} {$add_url} {$lang['add_or']} <a href=\"{$config['http_home_url']}\">{$lang['all_prev']}</a>" );]]></searchcode>
+			<replacecode><![CDATA[msgbox( $lang['add_ok'], "{$msg} {$add_url} {$lang['add_or']} <a href=\"{$config['http_home_url']}\">{$lang['all_prev']}</a>{$uploads_image}" );]]></replacecode>
 		</operation>
 		<operation action="before">
 			<searchcode><![CDATA[if( $config['allow_site_wysiwyg'] ) {]]></searchcode>
