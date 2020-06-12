@@ -223,14 +223,12 @@ else params[value.name] = value.value;
 ---
 Позволяет повлиять на пагинацию в настройках в разделе **Новости** будут две настройки с префиксом [Pagination]. Одна указывает через какое количество выставлять многоточие. Вторая указывает количество кнопок по бокам от текущей.
 
+!Если какие-то плагины нуждаются в доработке дайте знать.
 
 ### Donate
 Для материальной благодарности.
 
 <img src="https://qiwi.com/favicon.ico" width="16" height="16"> [Qiwi](https://qiwi.me/teramoune)
-
-<img src="https://www.webmoney.ru/img/logo-wm-sat-small.png" width="139" height="34">
-
  - Z990082286464 (webmoney usd)
  - 4100115063692304 (yandex)
 
