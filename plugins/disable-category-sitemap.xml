@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Disable category sitemap</name>
+	<description></description>
+	<icon></icon>
+	<version></version>
+	<dleversion>14</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>1</mnotice>
+	<mysqlinstall><![CDATA[ALTER TABLE `{prefix}_category` ADD `disable_sitemap` tinyint(1) NOT NULL Default '0']]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[ALTER TABLE `{prefix}_category` DROP `disable_sitemap`;]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[{disable-sitemap} в categorymenu.tpl добавит категории rel="nofollow"]]></notice>
+	<file name="engine/inc/categories.php">
+		<operation action="after">
+			<searchcode><![CDATA[<div class="checkbox"><label><input class="icheck" type="checkbox" name="disable_search" value="1">{$lang['cat_d_search']}</label></div>]]></searchcode>
+			<replacecode><![CDATA[<div class="checkbox"><label><input class="icheck" type="checkbox" name="disable_sitemap" value="1">Исключить из карты сайта</label></div>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[<div class="col-sm-6"><div class="checkbox"><label><input class="icheck" type="checkbox" name="disable_search" value="1" {$ifch}>{$lang['cat_d_search']}</label></div></div>]]></searchcode>
+			<replacecode><![CDATA[<div class="col-sm-6" style="max-width:300px;"><div class="checkbox"><label><input class="icheck" type="checkbox" name="disable_sitemap" value="1" {$ifds}>Исключить из карты сайта</label></div></div>]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[if( $row['disable_search'] ) $ifch = "checked";	else $ifch = "";]]></searchcode>
+			<replacecode><![CDATA[if( $row['disable_sitemap'] ) $ifds = "checked";	else $ifdsh = "";]]></replacecode>
+		</operation>
+		<operation action="after">
+			<searchcode><![CDATA[$disable_search = intval($_POST['disable_search']);]]></searchcode>
+			<replacecode><![CDATA[$disable_sitemap = intval($_POST['disable_sitemap']);]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[fulldescr='$fulldescr', disable_search='$disable_search',]]></searchcode>
+			<replacecode><![CDATA[fulldescr='$fulldescr', disable_search='$disable_search', disable_sitemap='$disable_sitemap',]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA[fulldescr, disable_search,]]></searchcode>
+			<replacecode><![CDATA[fulldescr, disable_search, disable_sitemap,]]></replacecode>
+		</operation>
+		<operation action="replace">
+			<searchcode><![CDATA['$fulldescr', '$disable_search',]]></searchcode>
+			<replacecode><![CDATA['$fulldescr', '$disable_search', '$disable_sitemap',]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/classes/google.class.php">
+		<operation action="after">
+			<searchcode><![CDATA[foreach ( $cat_info as $cats ) {]]></searchcode>
+			<replacecode><![CDATA[if( $cats['disable_sitemap'] ) continue;]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/classes/templates.class.php">
+		<operation action="after">
+			<searchcode><![CDATA[$template = str_replace( "{icon}", $row['icon'], $template );]]></searchcode>
+			<replacecode><![CDATA[$ds = '';
+if( $row['disable_sitemap'] ) $ds = ' rel="nofollow"';
+$template = str_replace( "{disable-sitemap}", $ds, $template );]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/engine.php">
+		<operation action="before">
+			<searchcode><![CDATA[if ( $cat_info[$category_id]['show_sub'] ) {]]></searchcode>
+			<replacecode><![CDATA[if( $cat_info[$category_id]['disable_sitemap'] ) $disable_index = true;
+]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
