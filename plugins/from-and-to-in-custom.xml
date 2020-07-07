@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>from and to in custom</name>
+	<description>Добавляет два параметра на выборку числового диапазона, между min и max поля.</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>14</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[]]></notice>
+	<file name="engine/modules/functions.php">
+		<operation action="before">
+			<searchcode><![CDATA[if( preg_match( "#idexclude=['\"](.+?)['\"]#i", $param_str, $match ) ) {]]></searchcode>
+			<replacecode><![CDATA[if( preg_match( "#(.*)_from=['\"](\d+?)['\"] (.*)_to=['\"](\d+?)['\"]#i", $param_str, $match ) ) {
+  
+  	if( isset($match[0]) AND ($match[1] == $match[3]) ) {
+      	$val_k 	= $db->safesql($match[1]);
+		$val_p1 = $db->safesql($match[2]);
+		$val_p2 = $db->safesql($match[4]);
+		$where[] = "ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$val_k}|', -1 ), '||', 1))>={$val_p1} AND ABS(SUBSTRING_INDEX(SUBSTRING_INDEX(xfields, '{$val_k}|', -1), '||', 1))<={$val_p2}";      
+    }
+  
+}]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
