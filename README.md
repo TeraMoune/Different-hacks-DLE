@@ -33,6 +33,8 @@
  22. [Auto-upload image](https://github.com/TeraMoune/Different-hacks-DLE#auto-upload-imagexml)
  23. [Ifxf aviable](https://github.com/TeraMoune/Different-hacks-DLE#ifxf-aviablexml)
  24. [Pagination_range](https://github.com/TeraMoune/Different-hacks-DLE#pagination_rangexml)
+ 25. [Disable category sitemap](https://github.com/TeraMoune/Different-hacks-DLE#disable-category-sitemapxml)
+ 26. [From and to in custom.xml](https://github.com/TeraMoune/Different-hacks-DLE#from-and-to-in-customxml)
 
 
 #### Added-tags-in-categorymenu.xml
@@ -223,6 +225,16 @@ else params[value.name] = value.value;
 #### pagination_range.xml
 ---
 Позволяет повлиять на пагинацию в настройках в разделе **Новости** будут две настройки с префиксом [Pagination]. Одна указывает через какое количество выставлять многоточие. Вторая указывает количество кнопок по бокам от текущей.
+
+#### disable-category-sitemap.xml
+---
+  - Шаблон применения: **categorymenu.tpl**.
+В настройках категории добавляет параметр при включении которого категория будет исключена из карты сайта. А в шаблоне категорий добавляется тег который выставит такой категории `rel="nofollow"`.
+
+#### from-and-to-in-custom.xml
+---
+Добавляет два параметра на выборку числового диапазона, между min и max поля. 
+`polename_from="X" polename_to="X"`
 
 !Если какие-то плагины нуждаются в доработке дайте знать.
 
