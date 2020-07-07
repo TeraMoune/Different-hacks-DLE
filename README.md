@@ -229,6 +229,7 @@ else params[value.name] = value.value;
 #### disable-category-sitemap.xml
 ---
   - Шаблон применения: **categorymenu.tpl**.
+  
 В настройках категории добавляет параметр при включении которого категория будет исключена из карты сайта. А в шаблоне категорий добавляется тег который выставит такой категории `rel="nofollow"`.
 
 #### from-and-to-in-custom.xml
