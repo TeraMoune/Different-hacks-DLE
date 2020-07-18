@@ -239,11 +239,7 @@ else params[value.name] = value.value;
 
 !Если какие-то плагины нуждаются в доработке дайте знать.
 
-### Donate
-Для материальной благодарности.
+### Контакты
+Email: teramoune@gmail.com
 
-<img src="https://qiwi.com/favicon.ico" width="16" height="16"> [Qiwi](https://qiwi.me/teramoune)
- - Z990082286464 (webmoney usd)
- - 4100115063692304 (yandex)
-
-Предложения по доработкам в телеграм.
+Telegram: TeraMoune
