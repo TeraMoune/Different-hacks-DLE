@@ -35,6 +35,7 @@
  24. [Pagination_range](https://github.com/TeraMoune/Different-hacks-DLE#pagination_rangexml)
  25. [Disable category sitemap](https://github.com/TeraMoune/Different-hacks-DLE#disable-category-sitemapxml)
  26. [From and to in custom.xml](https://github.com/TeraMoune/Different-hacks-DLE#from-and-to-in-customxml)
+ 27. [Global tags](https://github.com/TeraMoune/Different-hacks-DLE#global-tagsxml)
 
 
 #### Added-tags-in-categorymenu.xml
@@ -236,6 +237,10 @@ else params[value.name] = value.value;
 ---
 Добавляет два параметра на выборку числового диапазона, между min и max поля. 
 `polename_from="X" polename_to="X"`
+
+#### Global-tags.xml
+Глобальные теги определённых данных.
+`{g-year}, {g-title}, {g-link-site}, {g-description-site}, {g-short-title}, {g-sys-email}, {g-user-email}, {g-user-id}, {g-user-news}, {g-user-comments}, {g-user-group_id}, {g-user-group_name}, {g-user-login}, {g-user-lastdate}`
 
 !Если какие-то плагины нуждаются в доработке дайте знать.
 
