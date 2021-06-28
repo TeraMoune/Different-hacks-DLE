@@ -248,3 +248,12 @@ else params[value.name] = value.value;
 Email: teramoune@gmail.com
 
 Telegram: TeraMoune
+
+### На печеньки...
+> ЮMoney: 4100115063692304
+> 
+> Qiwi nickname: TERAMOUNE
+> 
+> Wmz: Z990082286464
+> 
+> Wmr: R425445633105
