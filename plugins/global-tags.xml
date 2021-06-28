@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dleplugin>
+	<name>Global tags</name>
+	<description>Глобальные теги в шаблоны для некоторых данных.
+@TeraMoune, https://teramoune.info/, https://github.com/TeraMoune</description>
+	<icon></icon>
+	<version></version>
+	<dleversion>14</dleversion>
+	<versioncompare>greater</versioncompare>
+	<upgradeurl></upgradeurl>
+	<filedelete>0</filedelete>
+	<needplugin></needplugin>
+	<mnotice>0</mnotice>
+	<mysqlinstall><![CDATA[]]></mysqlinstall>
+	<mysqlupgrade><![CDATA[]]></mysqlupgrade>
+	<mysqlenable><![CDATA[]]></mysqlenable>
+	<mysqldisable><![CDATA[]]></mysqldisable>
+	<mysqldelete><![CDATA[]]></mysqldelete>
+	<phpinstall><![CDATA[]]></phpinstall>
+	<phpupgrade><![CDATA[]]></phpupgrade>
+	<phpenable><![CDATA[]]></phpenable>
+	<phpdisable><![CDATA[]]></phpdisable>
+	<phpdelete><![CDATA[]]></phpdelete>
+	<notice><![CDATA[{g-year}
+{g-title}
+{g-link-site}
+{g-description-site}
+{g-short-title}
+{g-sys-email}
+{g-user-email}
+{g-user-id}
+{g-user-news}
+{g-user-comments}
+{g-user-group_id}
+{g-user-group_name}
+{g-user-login}
+{g-user-lastdate}]]></notice>
+	<file name="engine/modules/main.php">
+		<operation action="after">
+			<searchcode><![CDATA[$tpl->compile ( 'main' );]]></searchcode>
+			<replacecode><![CDATA[globalTags();]]></replacecode>
+		</operation>
+		<operation action="before">
+			<searchcode><![CDATA[$config['http_home_url'] = explode ( "index.php", strtolower ( $_SERVER['PHP_SELF'] ) );]]></searchcode>
+			<replacecode><![CDATA[$home_url_tmp = $config['http_home_url'];]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/modules/functions.php">
+		<operation action="before">
+			<searchcode><![CDATA[function dle_session( $sid = false ) {]]></searchcode>
+			<replacecode><![CDATA[function globalTags() {
+  	global $member_id, $user_group, $config, $home_url_tmp, $metatags_tmp, $is_logged, $tpl;
+
+	if (strpos ( $tpl->result['main'], "{g-year}" ) !== false) {
+		$tpl->result['main'] = str_replace( '{g-year}', date('Y'), $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-title}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-title}', $metatags_tmp['title'], $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-link-site}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-link-site}', $home_url_tmp, $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-description-site}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-description-site}', $config['description'], $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-short-title}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-short-title}', $config['short_title'], $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-sys-email}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-sys-email}', $config['admin_mail'], $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-user-email}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-user-email}', ($is_logged ? $member_id['email'] : ''), $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-user-id}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-user-id}', ($is_logged ? $member_id['user_id'] : ''), $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-user-news}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-user-news}', ($is_logged ? $member_id['news_num'] : ''), $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-user-comments}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-user-comments}', ($is_logged ? $member_id['comm_num'] : ''), $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-user-group_id}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-user-group_id}', ($is_logged ? $member_id['user_group'] : '5'), $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-user-group_name}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-user-group_name}', ($is_logged ? $user_group[$member_id['user_group']]['group_name'] : $user_group[5]['group_name']), $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-user-login}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-user-login}', ($is_logged ? $member_id['name'] : ''), $tpl->result['main'] );
+    }
+
+    if (strpos ( $tpl->result['main'], "{g-user-lastdate}" ) !== false) {
+        $tpl->result['main'] = str_replace( '{g-user-lastdate}', ($is_logged ? $member_id['lastdate'] : ''), $tpl->result['main'] );
+    }  
+
+}]]></replacecode>
+		</operation>
+	</file>
+	<file name="engine/engine.php">
+		<operation action="before">
+			<searchcode><![CDATA[$metatags = <<<HTML]]></searchcode>
+			<replacecode><![CDATA[$metatags_tmp = $metatags;]]></replacecode>
+		</operation>
+	</file>
+</dleplugin>
