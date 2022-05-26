@@ -255,5 +255,3 @@ Telegram: TeraMoune
 > Qiwi nickname: TERAMOUNE
 > 
 > Wmz: Z990082286464
-> 
-> Wmr: R425445633105
