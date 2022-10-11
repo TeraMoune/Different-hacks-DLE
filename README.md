@@ -241,17 +241,3 @@ else params[value.name] = value.value;
 #### Global-tags.xml
 Глобальные теги определённых данных.
 `{g-year}, {g-title}, {g-link-site}, {g-description-site}, {g-short-title}, {g-sys-email}, {g-user-email}, {g-user-id}, {g-user-news}, {g-user-comments}, {g-user-group_id}, {g-user-group_name}, {g-user-login}, {g-user-lastdate}`
-
-!Если какие-то плагины нуждаются в доработке дайте знать.
-
-### Контакты
-Email: teramoune@gmail.com
-
-Telegram: TeraMoune
-
-### На печеньки...
-> ЮMoney: 4100115063692304
-> 
-> Qiwi nickname: TERAMOUNE
-> 
-> Wmz: Z990082286464
