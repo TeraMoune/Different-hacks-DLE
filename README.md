@@ -1,13 +1,4 @@
-# Different-hacks-DLE
-#### Различные-хаки-DLE
----
-Различные хаки которые не дотягивают до полноценных модулей.
-Может кому-то пригодятся.
-
-### Установка
-Скачайте архив затем установите нужный плагин из папки plugins.
-
-### Список
+### List
 ---
  1.  [Added tags in categorymenu](https://github.com/TeraMoune/Different-hacks-DLE#added-tags-in-categorymenuxml)
  2.  [Hr text for news](https://github.com/TeraMoune/Different-hacks-DLE#hr-text-for-newsxml)
